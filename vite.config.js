@@ -4,7 +4,7 @@ export default {
   publicDir: '../static',
   base: '/mariastudio/',
   build: {
-    outDir: "dist"  // ✅ Fixed missing comma
+    outDir: "../dist"  // ✅ Fixed missing comma
   },
   server: {
     host: '0.0.0.0',
