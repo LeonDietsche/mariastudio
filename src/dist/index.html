@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  
+  
+  
+  
+  
+  
+  
+  <!-- <script type="module" src="./js/intl-tel-input-utils.js"></script> -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  
+  <!-- Include intl-tel-input CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.2.1/build/css/intlTelInput.css">
+  <!-- Include intl-tel-input JS -->
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.2.1/build/js/intlTelInput.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+  <title>MARIA STUDIO</title>
+  <link rel="icon" href="/mariastudio/ms_ligature.png">
+  <script type="module" crossorigin src="/mariastudio/assets/index-c0df8cce.js"></script>
+  <link rel="stylesheet" href="/mariastudio/assets/index-d80ace9d.css">
+</head>
+<body>
+  <header class="grid" id="idheader">
+    <div class="header-01">
+      <button class="header-button" id="toggleInfoBtn">
+        <h3><span id="toggleInfoStudio">INFO</span> <span id="toggleInfoPipe">|</span></h3>
+      </button>
+    </div>
+    <div class="header-02">
+      <button class="header-button" id="toggleBookBtn">
+        <h3><span>BOOK NOW</span> <span id="toggleBookPipe">|</span></h3>
+      </button>
+    </div>
+    <div class="header-03">
+      <button class="header-button" id="closeModalBtn">
+        <h3>&#215;</h3>
+      </button>
+    </div>
+    <div class="header-04">
+      <button class="header-button" id="toggleLanguageBtn">
+        <h3>EN/FR</h3>
+      </button>
+    </div>
+  </header>
+  <main>
+    <div id="studio"></div>
+    <div id="cover">
+        <img src="/mariastudio/ms_logotype.png" alt="Logo">
+    </div>
+  </main>
+  <div id="myModal" class="modal">
+    <div id="modal-body-container" class="modal-body"></div>
+    <div class="preload">
+      <img src="/mariastudio/images/IMG-001_MARIA_STUDIO.JPG" alt="Preload 1">
+      <img src="/mariastudio/images/IMG-002_MARIA_STUDIO.JPG" alt="Preload 2">
+      <img src="/mariastudio/images/IMG-003_MARIA_STUDIO.JPG" alt="Preload 3">
+      <img src="/mariastudio/images/IMG-004_MARIA_STUDIO.JPG" alt="Preload 4">
+      <img src="/mariastudio/images/IMG-005_MARIA_STUDIO.JPG" alt="Preload 5">
+      <img src="/mariastudio/images/IMG-006_MARIA_STUDIO.JPG" alt="Preload 6">
+      <img src="/mariastudio/images/IMG-007_MARIA_STUDIO.JPG" alt="Preload 7">
+      <img src="/mariastudio/images/IMG-008_MARIA_STUDIO.JPG" alt="Preload 8">
+    </div>
+   <div class="grid modal-footer-placeholder">
+        <div class="footer-01">
+          <a href="" target="_blank"><h3>Terms and Conditions</h3></a>
+        </div>
+        <div class="footer-02">
+          <h3>100 Avenue du Général Leclerc, 3500 Pantin</h3>
+        </div>
+        <div class="footer-03">
+          <a href="https://www.instagram.com/maria.studio.paris/" target="_blank"><h3>Instagram</h3></a>
+        </div>
+        <div class="footer-04">
+          <div id="newsletterFormMobile" class="newsletter-form-mobil hidden">
+            <form>
+              <h2 for="email">Newsletter Maria Studio</h2>
+              <input type="email" id="email" name="email" placeholder="Your email" required>
+              <button type="submit">Subscribe</button>
+            </form>
+          </div>
+          <h3 id="newsletterToggleMobile" class="">Newsletter</h3>
+        </div>
+    </div>
+  </div>
+  <div class="grid" id="newsletter">
+    <div id="newsletterForm" class="newsletter-form hidden">
+      <form>
+        <h2 for="email">Newsletter Maria Studio</h2>
+        <input type="email" id="email" name="email" placeholder="Your email" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </div>
+  <footer class="grid" id="idfooter">
+      <div class="footer-01">
+        <a href="" target="_blank">
+          <a href="/terms_and_conditions/ms_terms_and_conditions.pdf" target="_blank">
+          <h3 class="footer-desktop">Terms & Conditions</h3>
+        </a>
+      </div>
+      <div class="footer-02"> 
+        <h3 class="footer-phone">100 Avenue du Général Leclerc, 3500 Pantin</h3>
+        <h3 class="footer-desktop">100 Avenue du Général Leclerc, 3500 Pantin</h3>
+      </div>
+      <div class="footer-03">
+        <a href="https://www.instagram.com/maria.studio.paris/" target="_blank">
+          <h3 class="footer-desktop">Instagram</h3>
+        </a>
+      </div>
+      <div class="footer-04">
+        <h3 id="newsletterToggle" class="footer-desktop">Newsletter</h3>
+      </div>
+  </footer>
+</body>
+</html>
