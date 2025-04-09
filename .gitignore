@@ -1,0 +1,5 @@
+# Ignore gh-pages cache folder
+node_modules/.cache/gh-pages/
+
+# Ignore build folder inside 'src'
+src/dist/
