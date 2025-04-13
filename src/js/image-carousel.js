@@ -1,12 +1,12 @@
 const images = [
-  "./images/IMG-001_MARIA_STUDIO.JPG",
-  "./images/IMG-002_MARIA_STUDIO.JPG",
-  "./images/IMG-003_MARIA_STUDIO.JPG",
-  "./images/IMG-004_MARIA_STUDIO.JPG",
-  "./images/IMG-005_MARIA_STUDIO.JPG",
-  "./images/IMG-006_MARIA_STUDIO.JPG",
-  "./images/IMG-007_MARIA_STUDIO.JPG",
-  "./images/IMG-008_MARIA_STUDIO.JPG",
+  "/mariastudio/images/IMG-001_MARIA_STUDIO.JPG",
+  "/mariastudio/images/IMG-002_MARIA_STUDIO.JPG",
+  "/mariastudio/images/IMG-003_MARIA_STUDIO.JPG",
+  "/mariastudio/images/IMG-004_MARIA_STUDIO.JPG",
+  "/mariastudio/images/IMG-005_MARIA_STUDIO.JPG",
+  "/mariastudio/images/IMG-006_MARIA_STUDIO.JPG",
+  "/mariastudio/images/IMG-007_MARIA_STUDIO.JPG",
+  "/mariastudio/images/IMG-008_MARIA_STUDIO.JPG",
 ];
 
 let currentIndex = 0;
