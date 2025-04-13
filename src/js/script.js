@@ -32,7 +32,7 @@ function init() {
   var geometry = new THREE.SphereGeometry(500, 60, 40);
   geometry.scale(-1, 1, 1);
 
-  const texture = new THREE.TextureLoader().load('/250107_180.jpg');
+  const texture = new THREE.TextureLoader().load(import.meta.env.BASE_URL + '250107_180.jpg')
   texture.encoding = THREE.sRGBEncoding;
   const material = new THREE.MeshBasicMaterial({ map: texture });
 
