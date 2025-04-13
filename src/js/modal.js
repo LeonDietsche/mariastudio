@@ -1,5 +1,7 @@
 import myHelpers from './helper.js';
 
+const base = import.meta.env.BASE_URL;
+
 const modal = document.getElementById('myModal');
 const header = document.getElementById('idheader');
 const footer = document.getElementById('idfooter');
@@ -190,7 +192,7 @@ document.addEventListener('click', (event) => {
     if (modal.style.display === 'block') {
 
       // If we're on the booking modal, don't auto-close at all
-      if (currentContentUrl === 'modal-book.html') {
+      if (currentContentUrl.endsWith('modal-book.html')) {
         return;
       }
 
@@ -235,12 +237,10 @@ document.addEventListener('click', (event) => {
   }
 });
 
-toggleInfoBtn.addEventListener('click', () => loadModalContent(import.meta.env.BASE_URL + 'modal-info.html'));
-toggleBookBtn.addEventListener('click', () => loadModalContent(import.meta.env.BASE_URL + 'modal-book.html'));
+toggleInfoBtn.addEventListener('click', () => loadModalContent(base + 'modal-info.html'));
+toggleBookBtn.addEventListener('click', () => loadModalContent(base + 'modal-book.html'));
 
 //Mobile: start / stop Carousel
-const base = import.meta.env.BASE_URL;
-
 const images = [
   base + "images/IMG-001_MARIA_STUDIO.JPG",
   base + "images/IMG-002_MARIA_STUDIO.JPG",
