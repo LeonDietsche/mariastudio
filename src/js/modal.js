@@ -141,7 +141,7 @@ function initializeDesktopHoverEffect() {
   textItems.forEach(item => {
     item.addEventListener('mouseover', event => {
       const text = event.target.innerText.trim();
-      const imagePath = `/images/${text}`; // Adjust the path as needed
+      const imagePath = base + `/images/${text}`; // Adjust the path as needed
       modal.style.opacity = 1;
       imageContainer.style.backgroundImage = `url('${imagePath}')`;
       imageContainer.style.opacity = 1;
@@ -158,7 +158,7 @@ function initializeDesktopHoverEffect() {
   // Add hover effect for video item
   if (videoItem) {
     videoItem.addEventListener('mouseover', () => {
-      const videoPath = `videos/video-001_maria_studio.mp4`;
+      const videoPath = base + `videos/video-001_maria_studio.mp4`;
       modal.style.opacity = 1;
       videoContainer.innerHTML = `<video src="${videoPath}" autoplay loop></video>`;
       videoContainer.style.opacity = 1;
@@ -239,16 +239,19 @@ toggleInfoBtn.addEventListener('click', () => loadModalContent(import.meta.env.B
 toggleBookBtn.addEventListener('click', () => loadModalContent(import.meta.env.BASE_URL + 'modal-book.html'));
 
 //Mobile: start / stop Carousel
+const base = import.meta.env.BASE_URL;
+
 const images = [
-  "./images/IMG-001_MARIA_STUDIO.JPG",
-  "./images/IMG-002_MARIA_STUDIO.JPG",
-  "./images/IMG-003_MARIA_STUDIO.JPG",
-  "./images/IMG-004_MARIA_STUDIO.JPG",
-  "./images/IMG-005_MARIA_STUDIO.JPG",
-  "./images/IMG-006_MARIA_STUDIO.JPG",
-  "./images/IMG-007_MARIA_STUDIO.JPG",
-  "./images/IMG-008_MARIA_STUDIO.JPG",
+  base + "images/IMG-001_MARIA_STUDIO.JPG",
+  base + "images/IMG-002_MARIA_STUDIO.JPG",
+  base + "images/IMG-003_MARIA_STUDIO.JPG",
+  base + "images/IMG-004_MARIA_STUDIO.JPG",
+  base + "images/IMG-005_MARIA_STUDIO.JPG",
+  base + "images/IMG-006_MARIA_STUDIO.JPG",
+  base + "images/IMG-007_MARIA_STUDIO.JPG",
+  base + "images/IMG-008_MARIA_STUDIO.JPG",
 ];
+
 
 let currentIndex = 0;
 let intervalId = null;

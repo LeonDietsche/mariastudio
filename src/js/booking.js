@@ -1,4 +1,6 @@
 import myHelpers from './helper.js';
+const base = import.meta.env.BASE_URL;
+
 
 document.addEventListener('modalOpened', () => {
 
@@ -64,15 +66,15 @@ function toggleFirstTimeBooking() {
   const billingDetailsSame = document.getElementById('billingdetails-same');
 
   if (yesRadio.checked) {
-    imgYes.src = '/radio_button_checked.png';
-    imgNo.src = '/radio_button_unchecked.png';
+    imgYes.src = base + '/radio_button_checked.png';
+    imgNo.src = base + '/radio_button_unchecked.png';
     youAreaContainer.classList.remove('hidden');
     // billingDetailsOptions.classList.add('hidden');
     billingDetailsContainer.classList.remove('hidden');
     billingDetailsSame.checked = true; // Preselect "Same Billing details as usual"
   } else if (noRadio.checked) {
-    imgYes.src = '/radio_button_unchecked.png';
-    imgNo.src = '/radio_button_checked.png';
+    imgYes.src = base + '/radio_button_unchecked.png';
+    imgNo.src = base + '/radio_button_checked.png';
     youAreaContainer.classList.add('hidden');
     // billingDetailsOptions.classList.remove('hidden');
     billingDetailsContainer.classList.add('hidden'); // Hide initially until an option is selected
@@ -123,12 +125,12 @@ function toggleEQListFields() {
   const eqlistContainer = document.getElementById('eqlist-container');
 
   if (equipmentListReadyYes.checked) {
-      eqImgYes.src = '/radio_button_checked.png';
-      eqImgNo.src = '/radio_button_unchecked.png';
+      eqImgYes.src = base + '/radio_button_checked.png';
+      eqImgNo.src = base + '/radio_button_unchecked.png';
       eqlistContainer.classList.remove('hidden');
   } else if (equipmentListReadyNo.checked) {
-      eqImgYes.src = '/radio_button_unchecked.png';
-      eqImgNo.src = '/radio_button_checked.png';
+      eqImgYes.src = base + '/radio_button_unchecked.png';
+      eqImgNo.src = base + '/radio_button_checked.png';
       eqlistContainer.classList.add('hidden');
   }
 }
@@ -141,12 +143,12 @@ function toggleBillingDetails() {
   const billingDetailsContainer = document.getElementById('billing-details-container');
 
   if (billingDetailsSame.checked) {
-      billingImgSame.src = '/radio_button_checked.png';
-      billingImgNew.src = '/radio_button_unchecked.png';
+      billingImgSame.src = base + '/radio_button_checked.png';
+      billingImgNew.src = base + '/radio_button_unchecked.png';
       billingDetailsContainer.classList.add('hidden');
   } else if (billingDetailsNew.checked) {
-      billingImgSame.src = '/radio_button_unchecked.png';
-      billingImgNew.src = '/radio_button_checked.png';
+      billingImgSame.src = base + '/radio_button_unchecked.png';
+      billingImgNew.src = base + '/radio_button_checked.png';
       billingDetailsContainer.classList.remove('hidden');
   }
 }
