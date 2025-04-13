@@ -235,8 +235,8 @@ document.addEventListener('click', (event) => {
   }
 });
 
-toggleInfoBtn.addEventListener('click', () => loadModalContent('modal-info.html'));
-toggleBookBtn.addEventListener('click', () => loadModalContent('modal-book.html'));
+toggleInfoBtn.addEventListener('click', () => loadModalContent(import.meta.env.BASE_URL + 'modal-info.html'));
+toggleBookBtn.addEventListener('click', () => loadModalContent(import.meta.env.BASE_URL + 'modal-book.html'));
 
 //Mobile: start / stop Carousel
 const images = [
