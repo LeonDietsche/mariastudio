@@ -250,6 +250,8 @@ const images = [
   base + "images/IMG-006_MARIA_STUDIO.JPG",
   base + "images/IMG-007_MARIA_STUDIO.JPG",
   base + "images/IMG-008_MARIA_STUDIO.JPG",
+  base + "images/IMG-009_MARIA_STUDIO.JPG",
+  base + "images/IMG-010_MARIA_STUDIO.JPG",
 ];
 
 
