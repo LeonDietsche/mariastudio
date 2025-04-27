@@ -143,9 +143,8 @@ function initializeDesktopHoverEffect() {
 
   textItems.forEach(item => {
     item.addEventListener('mouseover', event => {
-      const text = event.target.innerText.trim();
-      console.log("Images name: " + text)
-      const imagePath = base + `images/${text}`; // Adjust the path as needed
+      const text = event.target.innerText.trim().replace(/\.JPG$/i, '.jpg');
+      const imagePath = `${base}images/${text}`; // Adjust the path as needed
       modal.style.opacity = 1;
       imageContainer.style.backgroundImage = `url('${imagePath}')`;
       imageContainer.style.opacity = 1;
@@ -244,18 +243,19 @@ toggleBookBtn.addEventListener('click', () => loadModalContent(base + 'modal-boo
 
 //Mobile: start / stop Carousel
 const images = [
-  `${base}images/IMG-001_MARIA_STUDIO.JPG`,
-  `${base}images/IMG-002_MARIA_STUDIO.JPG`,
-  `${base}images/IMG-003_MARIA_STUDIO.JPG`,
-  `${base}images/IMG-004_MARIA_STUDIO.JPG`,
-  `${base}images/IMG-005_MARIA_STUDIO.JPG`,
-  `${base}images/IMG-006_MARIA_STUDIO.JPG`,
-  `${base}images/IMG-007_MARIA_STUDIO.JPG`,
-  `${base}images/IMG-008_MARIA_STUDIO.JPG`,
-  `${base}images/IMG-009_MARIA_STUDIO.JPG`,
-  `${base}images/IMG-010_MARIA_STUDIO.JPG`,
+  `${base}images/IMG-001_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-002_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-003_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-004_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-005_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-006_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-007_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-008_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-009_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-010_MARIA_STUDIO.jpg`,
 ];
 
+console.log("modal: " + images[0]);
 
 let currentIndex = 0;
 let intervalId = null;
