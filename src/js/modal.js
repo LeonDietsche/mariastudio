@@ -1,6 +1,7 @@
 import myHelpers from './helper.js';
 
 const base = import.meta.env.BASE_URL;
+console.log(base);
 
 const modal = document.getElementById('myModal');
 const header = document.getElementById('idheader');
@@ -143,7 +144,8 @@ function initializeDesktopHoverEffect() {
   textItems.forEach(item => {
     item.addEventListener('mouseover', event => {
       const text = event.target.innerText.trim();
-      const imagePath = base + `/images/${text}`; // Adjust the path as needed
+      console.log("Images name: " + text)
+      const imagePath = base + `images/${text}`; // Adjust the path as needed
       modal.style.opacity = 1;
       imageContainer.style.backgroundImage = `url('${imagePath}')`;
       imageContainer.style.opacity = 1;
@@ -242,16 +244,16 @@ toggleBookBtn.addEventListener('click', () => loadModalContent(base + 'modal-boo
 
 //Mobile: start / stop Carousel
 const images = [
-  base + "images/IMG-001_MARIA_STUDIO.JPG",
-  base + "images/IMG-002_MARIA_STUDIO.JPG",
-  base + "images/IMG-003_MARIA_STUDIO.JPG",
-  base + "images/IMG-004_MARIA_STUDIO.JPG",
-  base + "images/IMG-005_MARIA_STUDIO.JPG",
-  base + "images/IMG-006_MARIA_STUDIO.JPG",
-  base + "images/IMG-007_MARIA_STUDIO.JPG",
-  base + "images/IMG-008_MARIA_STUDIO.JPG",
-  base + "images/IMG-009_MARIA_STUDIO.JPG",
-  base + "images/IMG-010_MARIA_STUDIO.JPG",
+  `${base}images/IMG-001_MARIA_STUDIO.JPG`,
+  `${base}images/IMG-002_MARIA_STUDIO.JPG`,
+  `${base}images/IMG-003_MARIA_STUDIO.JPG`,
+  `${base}images/IMG-004_MARIA_STUDIO.JPG`,
+  `${base}images/IMG-005_MARIA_STUDIO.JPG`,
+  `${base}images/IMG-006_MARIA_STUDIO.JPG`,
+  `${base}images/IMG-007_MARIA_STUDIO.JPG`,
+  `${base}images/IMG-008_MARIA_STUDIO.JPG`,
+  `${base}images/IMG-009_MARIA_STUDIO.JPG`,
+  `${base}images/IMG-010_MARIA_STUDIO.JPG`,
 ];
 
 
