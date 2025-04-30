@@ -364,60 +364,60 @@ function validateForm(form) {
   return valid;
 }
 
-emailjs.init("RVk1Lg2ubNEmLAM3q");
-
 function logFormData() {
   const formData1 = new FormData(document.getElementById('form-part-01'));
   const formData2 = new FormData(document.getElementById('form-part-02'));
   const formData3 = new FormData(document.getElementById('form-part-03'));
-  const combinedData = {...Object.fromEntries(formData1), ...Object.fromEntries(formData2), ...Object.fromEntries(formData3)};
 
-  // Check specific condition and set value accordingly
-  if (!combinedData.contact_firsttime) {
-      combinedData.youarea = '';
-  } else {
-    if (combinedData.contact_firsttime === 'no') {
-      combinedData.youarea = '';
-    }
-  }
-
-  // Log the combined data to the console
-  console.log('Form Data:', combinedData);
-
-  // EmailJS configuration
-  const templateParams = {
-    to_name: 'Recipient Name', // Add the recipient's name if required
-    from_name: 'Sender Name', // Add your name or sender's name
-    message: JSON.stringify(combinedData, null, 2) // Convert the combined data to a JSON string for better readability
+  const combinedData = {
+    ...Object.fromEntries(formData1),
+    ...Object.fromEntries(formData2),
+    ...Object.fromEntries(formData3),
+    date: new Date().toISOString()
   };
 
-   // Handle file upload to base64
-   const fileInput = document.querySelector('input[type="file"]');
-   const file = fileInput.files[0];
- 
-   if (file) {
-     const reader = new FileReader();
-     reader.onload = function(e) {
-       const base64String = e.target.result.split(',')[1]; // Remove the prefix data part
-       templateParams.file_content = base64String;
-       templateParams.file_name = file.name;
- 
-       // Send email using EmailJS
-       sendEmail(templateParams);
-     };
-     reader.readAsDataURL(file); // Convert file to Base64
-   } else {
-     // No file, proceed without the file
-     sendEmail(templateParams);
-   }
- }
+  // Optional: handle the "youarea" field logic
+  if (!combinedData.contact_firsttime || combinedData.contact_firsttime === 'no') {
+    combinedData.youarea = '';
+  }
 
- function sendEmail(templateParams) {
-  emailjs.send('service_mg2k2m3', 'template_b40whiz', templateParams)
-    .then(function(response) {
-      console.log('SUCCESS!', response.status, response.text);
-    }, function(error) {
-      console.log('FAILED...', error);
+  // Optional: handle file upload (safely omit or base64 encode if you want)
+  const fileInput = document.querySelector('input[type="file"]');
+  const file = fileInput?.files[0];
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      combinedData.file_name = file.name;
+      combinedData.file_content = e.target.result;
+
+      // Submit after encoding file
+      sendFormDataToServer(combinedData);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    // Submit directly without file
+    sendFormDataToServer(combinedData);
+  }
+}
+
+function sendFormDataToServer(data) {
+  fetch('https://mariastudio-backend.onrender.com/submit-booking', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to submit booking");
+      return res.json();
+    })
+    .then(response => {
+      console.log('Booking submitted successfully:', response);
+      alert('Thank you! Your booking has been submitted.');
+    })
+    .catch(err => {
+      console.error('Error submitting booking:', err);
+      alert('There was a problem submitting the form. Please try again.');
     });
 }
 
