@@ -1,10 +1,12 @@
 import myHelpers from './helper.js';
 const base = import.meta.env.BASE_URL;
 
+// ✅ Ping Render backend early
+fetch('https://mariastudio-backend.onrender.com/ping')
+  .then(() => console.log("🟢 Render server pinged"))
+  .catch(() => console.warn("⚠️ Could not ping backend"));
 
 document.addEventListener('modalOpened', () => {
-
-
   const input = document.querySelector("#phone");
   window.intlTelInput(input, {
     loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.2.1/build/js/utils.js"),
