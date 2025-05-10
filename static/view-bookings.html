@@ -27,6 +27,19 @@
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
     }
 
+    .booking-card button {
+      width: 100%;
+      background: #eee;
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      text-align: left;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+    }
+
     .section {
       margin-bottom: 1rem;
     }
@@ -72,6 +85,10 @@
 
   <script>
     const password = prompt("Enter admin password:");
+    if (!password) {
+      document.body.innerHTML = "<p class='error'>⛔ No password entered. Reload to try again.</p>";
+      throw new Error("No password entered");
+    }
 
     fetch('https://mariastudio-backend.onrender.com/bookings', {
       headers: {
@@ -85,10 +102,16 @@
     .then(data => {
       const container = document.getElementById('bookings');
       if (!Array.isArray(data)) throw new Error("Invalid data format");
+        console.log(data);
+      data.forEach((entry, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'booking-card';
 
-      data.forEach(entry => {
-        const card = document.createElement('div');
-        card.className = 'booking-card';
+        const summary = document.createElement('button');
+        summary.textContent = entry.contact_name || `Booking #${index + 1}`;
+
+        const details = document.createElement('div');
+        details.style.display = 'none';
 
         const formatField = (label, value) => `
           <div class="field">
@@ -97,33 +120,29 @@
           </div>
         `;
 
-        const formattedDates = Array.isArray(entry.contact_appointment_dates)
-          ? entry.contact_appointment_dates.map(d => `<li>${d}</li>`).join('')
-          : `<li>${entry.contact_appointment_dates || entry.date || '—'}</li>`;
-
-        card.innerHTML = `
+        details.innerHTML = `
           <div class="section">
             <h2>🧍 Contact</h2>
+            ${formatField("Appointment Dates", entry["contact_appointment-dates"])}
+            ${formatField("Shoot Days", entry.contact_shootdays)}
             ${formatField("Name", entry.contact_name)}
             ${formatField("Email", entry.contact_email)}
-            ${formatField("Phone", entry.contact_phone)}
             ${formatField("Company", entry.contact_company)}
+            ${formatField("Phone", entry.contact_phone)}
             ${formatField("First Time?", entry.contact_firsttime)}
             ${formatField("Role", entry.youarea)}
           </div>
 
           <div class="section">
-            <h2>🎬 Project</h2>
+            <h2>🎬 Project</h2> 
             ${formatField("Type", entry["general_project-type"])}
             ${formatField("Photographer", entry.general_photographer)}
             ${formatField("Brand", entry.general_brandname)}
             ${formatField("Magazine", entry.general_magazinename)}
             ${formatField("Tell Us More", entry.general_tellusmore)}
             ${formatField("People", entry.general_numberofpeople)}
-            ${formatField("Shoot Days", entry.contact_shootdays)}
             ${formatField("Equipment Ready", entry.general_equipmentlistready)}
             ${formatField("Equipment Text", entry.general_eqlisttext)}
-            ${formatField("Appointment Dates", `<ul>${formattedDates}</ul>`)}
           </div>
 
           <div class="section">
@@ -144,7 +163,14 @@
           </div>
         `;
 
-        container.appendChild(card);
+        summary.addEventListener('click', () => {
+          const isOpen = details.style.display === 'block';
+          details.style.display = isOpen ? 'none' : 'block';
+        });
+
+        wrapper.appendChild(summary);
+        wrapper.appendChild(details);
+        container.appendChild(wrapper);
       });
     })
     .catch(err => {

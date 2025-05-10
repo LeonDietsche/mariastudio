@@ -240,23 +240,29 @@ function handleBackBtn3() {
   showPreviousPart(3);
 }
 
+// function handleFormSubmit(event) {
+//   //testing
+//   event.preventDefault(); // Prevent form submission and page reload
+
+//   const formPart3 = document.getElementById('form-part-03');
+//   if (validateForm(formPart3)) {
+//     logFormData();  // Log the form data here after validation
+//     // Here you can also manually trigger an AJAX call to submit the form if needed
+//   }
+// }
+
 function handleFormSubmit(event) {
-  //testing
-  event.preventDefault(); // Prevent form submission and page reload
+  event.preventDefault(); // Prevent form reload
+  document.getElementById('form-loading').classList.remove('hidden'); // Show loading
+  document.getElementById('form-success').classList.add('hidden');
+  document.getElementById('form-error').classList.add('hidden');
 
   const formPart3 = document.getElementById('form-part-03');
   if (validateForm(formPart3)) {
-    logFormData();  // Log the form data here after validation
-    // Here you can also manually trigger an AJAX call to submit the form if needed
-  }
-
-  /*
-  const formPart3 = document.getElementById('form-part-03');
-  if (validateForm(formPart3)) {
-    logFormData();  // Log the form data here after validation
+    logFormData();
   } else {
-    event.preventDefault(); // Prevent form submission if the form is not valid
-  }*/
+    document.getElementById('form-loading').classList.add('hidden');
+  }
 }
 
 function showNextPart(currentPart) {
@@ -285,39 +291,6 @@ function showPreviousPart(currentPart) {
     }
   }
 }
-
-// function validateForm(form) {
-//   let valid = true;
-
-//   // Validate required input, select, and textarea elements
-//   const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
-//   inputs.forEach(input => {
-//     if (!input.value.trim()) {
-//       valid = false;
-//       input.classList.add('error');
-//     } else {
-//       input.classList.remove('error');
-//     }
-//   });
-
-//   // Custom validation for radio button groups
-//   const radioGroups = form.querySelectorAll('.custom-radio');
-//   radioGroups.forEach(group => {
-//     const radios = group.querySelectorAll('input[type="radio"]');
-//     const isSelected = Array.from(radios).some(radio => radio.checked);
-
-//     if (!isSelected) {
-//       valid = false;
-//       group.classList.add('error'); // You can style this class to highlight the group
-//     } else {
-//       group.classList.remove('error');
-//     }
-//   });
-
-//   return valid;
-// }
-
-// Initialize EmailJS
 
 function validateForm(form) {
   let valid = true;
@@ -415,11 +388,13 @@ function sendFormDataToServer(data) {
     })
     .then(response => {
       console.log('Booking submitted successfully:', response);
-      alert('Thank you! Your booking has been submitted.');
+      document.getElementById('form-loading').classList.add('hidden');
+      document.getElementById('form-success').classList.remove('hidden');
     })
     .catch(err => {
       console.error('Error submitting booking:', err);
-      alert('There was a problem submitting the form. Please try again.');
+      document.getElementById('form-loading').classList.add('hidden');
+      document.getElementById('form-error').classList.remove('hidden');
     });
 }
 
