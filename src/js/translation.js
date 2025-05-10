@@ -3,7 +3,7 @@ const translations = {
     _main01_title: "Visual Content",
     _main02_title: "Services",
     _main02_1_included: "Services included",
-    _main02_1_included_list: `- Set assistant<br>- Breakfast [10 people]<br>- Racks, hangers & steamer<br>- Changing cabin<br>- Makeup table<br>- Polyboards<br>- High electric tension, up to 96 kW<br>- High speed Wi-Fi: 500Mbps<br>- Air conditioning<br>- Sound system<br>- Heavy vehicle access<br>- Large goods elevator<br>- Private parking spot<br>- Equipment rental management<br>- Kitchen with fridges<br>- Catering reheating system<br>- Daylight<br>- Full blackout possible<br>- Alarm system, cameras<br>- 24h Security Agent on site<br>- Safe available`,
+    _main02_1_included_list: `- Set assistant<br>- Breakfast [10 people]<br>- Racks, hangers & steamer<br>- Changing cabin<br>- Makeup table<br>- Polyboards<br>- High electric tension [96 KW]<br>- High speed Wi-Fi: 500Mbps<br>- Air conditioning<br>- Sound system<br>- Heavy vehicle access<br>- Large goods elevator<br>- Private parking spot<br>- Equipment rental management<br>- Kitchen with fridges<br>- Catering reheating system<br>- Daylight<br>- Full blackout possible<br>- Alarm system, cameras<br>- 24h Security Agent on site<br>- Safe available`,
     _main02_2_demand: "Services on demand",
     _main02_2_demand_list: `- Catering<br>- Production coordination<br>- Digital capturing<br>- Lighting assistance<br>- Retouching<br>- Post-production`,
     _main03_title: "Technical Specifications",
