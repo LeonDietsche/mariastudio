@@ -1,4 +1,4 @@
-const translations = {
+export const translations = {
   en: {
     _main01_title: "Visual Content",
     _main02_title: "Services",
@@ -8,7 +8,7 @@ const translations = {
     _main02_2_demand_list: `- Catering<br>- Production coordination<br>- Digital capturing<br>- Lighting assistance<br>- Retouching<br>- Post-production`,
     _main03_title: "Technical Specifications",
     _main03_1_StudioMeasurements: "Studio Measurements",
-    _main03_1_StudioMeasurements_list: `- Surface area: 2200 ft&sup2;/205 m&sup2;<br>- Ceiling height: 14 ft/4.5 m<br>- Cyclorama: 22 ft × 29 ft / W 6.8m × L 9 m<br>- Entry door: H 203 cm × W 110 cm`,
+    _main03_1_StudioMeasurements_list: `- Surface area: 2200 ft&sup2;/205 m&sup2;<br>- Ceiling height: 14 ft/4.5 m<br>- Cyclorama: 22 ft × 29 ft/W 6.8 m × L 9 m<br>- Entry door: H 203 cm × W 110 cm`,
     _main03_2_Electricity: "Electricity",
     _main03_2_Electricity_list: `- High voltage, up to 96 kW<br>- High-speed Wi-Fi: 500 Mbps`,
     _main03_3_Elevators: "Elevators",
@@ -35,24 +35,44 @@ const translations = {
   }
 };
 
-let currentLanguage = 'en';
+export let currentLanguage = 'en';
 
-function switchLanguage() {
+export function switchLanguage() {
   currentLanguage = currentLanguage === 'en' ? 'fr' : 'en';
   applyTranslations();
+  updateTermsLinks(); 
 }
 
-function applyTranslations() {
+export function updateTermsLinks() {
+  const base = "/mariastudio/terms_conditions";
+  const file = currentLanguage === "fr"
+    ? "ms_terms_and_conditions_fr.pdf"
+    : "ms_terms_and_conditions_en.pdf";
+
+  const href = `${base}/${file}`;
+
+  const desktop = document.getElementById("termsLinkDesktop");
+  const modal = document.getElementById("termsLinkModal");
+
+  if (desktop) desktop.href = href;
+  if (modal) modal.href = href;
+}
+
+export function applyTranslations() {
   const translatableIds = Object.keys(translations[currentLanguage]);
   translatableIds.forEach((id) => {
     const element = document.getElementById(id);
     if (element) {
       element.innerHTML = translations[currentLanguage][id];
     } else {
-      console.warn(`Element with id '${id}' not found.`);
+      // element not present in this view (that's fine)
+      // console.warn(`Element with id '${id}' not found.`);
     }
   });
 }
 
 document.getElementById('toggleLanguageBtn').addEventListener('click', switchLanguage);
-document.addEventListener('DOMContentLoaded', applyTranslations);
+document.addEventListener('DOMContentLoaded', () => {
+  applyTranslations();
+  updateTermsLinks();
+});

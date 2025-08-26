@@ -1,4 +1,5 @@
 import myHelpers from './helper.js';
+import { applyTranslations, updateTermsLinks } from './translation.js';
 
 const base = import.meta.env.BASE_URL;
 console.log(base);
@@ -58,7 +59,7 @@ function toggleModal(forceOpen = false) {
   const event = new Event(isModalOpen && !forceOpen ? 'modalClosed' : 'modalOpened');
   document.dispatchEvent(event);
 
- if (myHelpers.isMobile() === true) {
+  if (myHelpers.isMobile() === true) {
     if (isModalOpen && !forceOpen) {
       header.style.background = '';
       header.style.opacity = 1;
@@ -84,11 +85,11 @@ async function loadModalContent(url) {
   }
 
   // Show/hide pipes based on which modal is being opened
-  if (url === 'modal-book.html') {
+  if (url.endsWith('modal-book.html')) {
     toggleBookPipe.style.display = 'inline';   // or 'block'
     toggleInfoPipe.style.display = 'none';
     closeModalBtn.style.display  = 'inline';
-  } else if (url === 'modal-info.html') {
+  } else if (url.endsWith('modal-info.html')) {
     toggleInfoPipe.style.display = 'inline';   // or 'block'
     toggleBookPipe.style.display = 'none';
     closeModalBtn.style.display  = 'inline';
@@ -99,12 +100,12 @@ async function loadModalContent(url) {
     closeModalBtn.style.display  = 'none'; 
   }
 
-  if (url === 'modal-book.html') {
+  if (url.endsWith('modal-book.html')) {
     let modalFooterPlaceholder = document.getElementsByClassName('modal-footer-placeholder');
     if (modalFooterPlaceholder.length > 0) {
       modalFooterPlaceholder[0].style.position = 'fixed';
     }
-  }else{
+  } else {
     let modalFooterPlaceholder = document.getElementsByClassName('modal-footer-placeholder');
     if (modalFooterPlaceholder.length > 0) {
       modalFooterPlaceholder[0].style.position = 'static';
@@ -116,6 +117,11 @@ async function loadModalContent(url) {
     if (!response.ok) throw new Error('Network response was not ok');
     
     modalBodyContainer.innerHTML = await response.text();
+
+    // Newly injected DOM needs translating + link refresh
+    applyTranslations();
+    updateTermsLinks();
+
     currentContentUrl = url;
 
     if (myHelpers.isMobile() === false) {
@@ -193,7 +199,7 @@ document.addEventListener('click', (event) => {
     if (modal.style.display === 'block') {
 
       // If we're on the booking modal, don't auto-close at all
-      if (currentContentUrl.endsWith('modal-book.html')) {
+      if (currentContentUrl && currentContentUrl.endsWith('modal-book.html')) {
         return;
       }
 
@@ -335,6 +341,3 @@ function initializeCarousel() {
   document.addEventListener('modalOpened', startCarousel);
   document.addEventListener('modalClosed', stopCarousel);
 }
-
-
-
