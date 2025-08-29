@@ -34,7 +34,53 @@ closeModalBtn.addEventListener('click', () => toggleModal());
 
 let currentContentUrl = null;
 
-// Function to toggle the modal display
+/* ------------------------------
+   Responsive mode management (JS-only)
+------------------------------ */
+const mq = window.matchMedia('(max-width: 1275px)');
+let isMobileMode = mq.matches;
+let desktopHoverInitialized = false; // avoid double-binding
+let carouselInitialized = false;
+
+function debounce(fn, wait = 150) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+}
+
+// When INFO modal is open, ensure the right UI is active for current viewport
+function setupUIModeForInfoView() {
+  const infoOpen =
+    currentContentUrl &&
+    currentContentUrl.endsWith('modal-info.html') &&
+    modal.style.display === 'block';
+
+  if (!infoOpen) return;
+
+  if (isMobileMode) {
+    if (!carouselInitialized) {
+      initializeCarousel();   // safe to call once
+      carouselInitialized = true;
+    }
+    startCarousel();          // (re)start timer & show current slide
+  } else {
+    stopCarousel();           // stop timers when leaving mobile
+    if (!desktopHoverInitialized) {
+      initializeDesktopHoverEffect();
+      desktopHoverInitialized = true;
+    }
+  }
+}
+
+// React to viewport changes (no CSS changes needed)
+mq.addEventListener('change', debounce((e) => {
+  const prev = isMobileMode;
+  isMobileMode = e.matches;
+  if (prev !== isMobileMode) setupUIModeForInfoView();
+}, 150));
+
+/* ------------------------------
+   Modal show/hide
+------------------------------ */
 function toggleModal(forceOpen = false) {
   const isModalOpen = modal.style.display === 'block';
   if (forceOpen) {
@@ -70,9 +116,16 @@ function toggleModal(forceOpen = false) {
       footer.style.opacity = 0;
     }
   }
+
+  // When closing modal, stop carousel so no timers run in background
+  if (!forceOpen && isModalOpen) {
+    stopCarousel();
+  }
 }
 
-// Function to load the modal content
+/* ------------------------------
+   Load modal content
+------------------------------ */
 async function loadModalContent(url) {
   if (modal.style.display === 'block' && currentContentUrl === url) {
     // Close modal if the same content is being loaded
@@ -86,20 +139,20 @@ async function loadModalContent(url) {
 
   // Show/hide pipes based on which modal is being opened
   if (url.endsWith('modal-book.html')) {
-    toggleBookPipe.style.display = 'inline';   // or 'block'
+    toggleBookPipe.style.display = 'inline';
     toggleInfoPipe.style.display = 'none';
     closeModalBtn.style.display  = 'inline';
   } else if (url.endsWith('modal-info.html')) {
-    toggleInfoPipe.style.display = 'inline';   // or 'block'
+    toggleInfoPipe.style.display = 'inline';
     toggleBookPipe.style.display = 'none';
     closeModalBtn.style.display  = 'inline';
   } else {
-    // Default case: hide both
     toggleBookPipe.style.display = 'none';
     toggleInfoPipe.style.display = 'none';
     closeModalBtn.style.display  = 'none'; 
   }
 
+  // Footer placeholder behavior
   if (url.endsWith('modal-book.html')) {
     let modalFooterPlaceholder = document.getElementsByClassName('modal-footer-placeholder');
     if (modalFooterPlaceholder.length > 0) {
@@ -117,40 +170,49 @@ async function loadModalContent(url) {
     if (!response.ok) throw new Error('Network response was not ok');
     
     modalBodyContainer.innerHTML = await response.text();
+    currentContentUrl = url;
 
-    // Newly injected DOM needs translating + link refresh
+    // Translate & update terms link for freshly injected DOM
     applyTranslations();
     updateTermsLinks();
 
-    currentContentUrl = url;
-
-    if (myHelpers.isMobile() === false) {
-      initializeDesktopHoverEffect();
-    } else {
-      initializeCarousel();
-      startCarousel();
-    }
-
+    // Open modal now that content exists
     toggleModal(true);
 
+    // Ensure right UI for current viewport (works even after resize)
+    setupUIModeForInfoView();
+
     const event = new Event('modalOpened');
-    document.dispatchEvent(event);  // Dispatch event after modal content is loaded and displayed
+    document.dispatchEvent(event);  // after content is loaded and displayed
   } catch (error) {
     console.error('Failed to load modal content:', error);
   }
 }
 
-//Desktop: Hover over Images / Video
+/* ------------------------------
+   Desktop: Hover over Images / Video
+------------------------------ */
 function initializeDesktopHoverEffect() {
   const textItems = document.querySelectorAll('#main-01 p');
   const videoItem = document.querySelector('#videodiv');
   const imageContainer = document.getElementById('image-container');
   const videoContainer = document.getElementById('video-container');
 
+  // Build canonical on-disk filename from text (solves case mismatches)
+  const buildImageFilename = (rawText) => {
+    const match = String(rawText).match(/IMG[-_ ]?(\d{3})/i);
+    if (!match) return null;
+    const num = match[1];
+    return `IMG-${num}_MARIA_STUDIO.jpg`;
+  };
+
   textItems.forEach(item => {
     item.addEventListener('mouseover', event => {
-      const text = event.target.innerText.trim().replace(/\.JPG$/i, '.jpg');
-      const imagePath = `${base}images/${text}`; // Adjust the path as needed
+      const raw = event.target.innerText.trim();
+      const filename = buildImageFilename(raw);
+      if (!filename) return;
+
+      const imagePath = `${base}images/${filename}`;
       modal.style.opacity = 1;
       imageContainer.style.backgroundImage = `url('${imagePath}')`;
       imageContainer.style.opacity = 1;
@@ -164,12 +226,11 @@ function initializeDesktopHoverEffect() {
     });
   });
 
-  // Add hover effect for video item
   if (videoItem) {
     videoItem.addEventListener('mouseover', () => {
       const videoPath = base + `videos/video-001_maria_studio.mp4`;
       modal.style.opacity = 1;
-      videoContainer.innerHTML = `<video src="${videoPath}" autoplay loop></video>`;
+      videoContainer.innerHTML = `<video src="${videoPath}" autoplay loop playsinline muted></video>`;
       videoContainer.style.opacity = 1;
       videoContainer.style.display = 'block';
     });
@@ -183,7 +244,126 @@ function initializeDesktopHoverEffect() {
   }
 }
 
-//Desktop: Click / ESC the Modal
+/* ------------------------------
+   Carousel (mobile)
+------------------------------ */
+const images = [
+  `${base}images/IMG-001_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-002_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-003_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-004_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-005_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-006_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-007_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-008_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-009_MARIA_STUDIO.jpg`,
+  `${base}images/IMG-010_MARIA_STUDIO.jpg`,
+];
+
+let currentIndex = 0;
+let intervalId = null;
+let visibilityListenerAdded = false;
+
+function showImage(index) {
+  const carouselImage = document.getElementById('carousel-image');
+  const imageCounter = document.getElementById('image-counter');
+
+  if (carouselImage) {
+    carouselImage.src = images[index];
+  }
+  if (imageCounter) {
+    imageCounter.innerText = `${String(index + 1).padStart(2, '0')}/${String(images.length).padStart(2, '0')}`;
+  }
+}
+
+function nextImage() {
+  currentIndex = (currentIndex + 1) % images.length;
+  showImage(currentIndex);
+}
+
+function prevImage() {
+  currentIndex = (currentIndex - 1 + images.length) % images.length;
+  showImage(currentIndex);
+}
+
+function startCarousel() {
+  const carouselImage = document.getElementById('carousel-image');
+  if (!carouselImage) return; // not in DOM yet
+
+  if (!intervalId) {
+    showImage(currentIndex); // show immediately
+    intervalId = setInterval(nextImage, 5000);
+  }
+
+  // Pause/resume when tab visibility changes
+  if (!visibilityListenerAdded) {
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopCarousel();
+      else if (isMobileMode && modal.style.display === 'block') startCarousel();
+    });
+    visibilityListenerAdded = true;
+  }
+}
+
+function stopCarousel() {
+  if (intervalId) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+}
+
+function initializeCarousel() {
+  const carousel = document.getElementById('main-01-carousel');
+  const carouselImage = document.getElementById('carousel-image');
+  if (!carousel || !carouselImage) return;
+
+  showImage(currentIndex);
+
+  // Touch & click navigation
+  let touchstartX = 0;
+  let touchendX = 0;
+
+  const handleGesture = () => {
+    if (touchendX < touchstartX) nextImage();
+    if (touchendX > touchstartX) prevImage();
+    // reset timer on manual nav
+    stopCarousel();
+    startCarousel();
+  };
+
+  carousel.addEventListener('touchstart', (e) => {
+    touchstartX = e.changedTouches[0].screenX;
+  });
+  carousel.addEventListener('touchend', (e) => {
+    touchendX = e.changedTouches[0].screenX;
+    handleGesture();
+  });
+
+  carouselImage.addEventListener('click', (e) => {
+    const clickX = e.clientX;
+    const imageWidth = carouselImage.clientWidth;
+    const clickPosition = clickX / imageWidth;
+    if (clickPosition < 0.5) {
+      prevImage();
+    } else {
+      nextImage();
+    }
+    stopCarousel();
+    startCarousel();
+  });
+
+  // Also tie to modal lifecycle
+  document.addEventListener('modalOpened', () => {
+    if (isMobileMode) startCarousel();
+  });
+  document.addEventListener('modalClosed', () => {
+    stopCarousel();
+  });
+}
+
+/* ------------------------------
+   Close on ESC (already present)
+------------------------------ */
 function handleKeyDown(event) {
   if (event.key === 'Escape') {
     if (modal.style.display === 'block') {
@@ -193,9 +373,10 @@ function handleKeyDown(event) {
 }
 
 document.addEventListener('keydown', handleKeyDown);
+
+// Desktop: click outside to close (keep your logic)
 document.addEventListener('click', (event) => {
   if (myHelpers.isMobile() === false) {
-    // Is the modal currently open?
     if (modal.style.display === 'block') {
 
       // If we're on the booking modal, don't auto-close at all
@@ -203,7 +384,6 @@ document.addEventListener('click', (event) => {
         return;
       }
 
-      // Existing checks:
       const isClickInsideModal      = modalBodyContainer.contains(event.target);
       const isClickOnHeader         = header.contains(event.target);
       const isClickOnFooter         = footer.contains(event.target);
@@ -211,12 +391,11 @@ document.addEventListener('click', (event) => {
       const isClickOnLanguageButton = document.getElementById('toggleLanguageBtn')
                                              .contains(event.target);
 
-      // NEW: Check if the click is inside either newsletter form
+      // Check if the click is inside either newsletter form
       const newsletterFormMobil = document.querySelector('.newsletter-form-mobil');
       const newsletterForm      = document.getElementById('newsletterForm');
       let isClickOnNewsletter   = false;
 
-      // If these elements exist, see if they contain the click target
       if (newsletterFormMobil && newsletterFormMobil.contains(event.target)) {
         isClickOnNewsletter = true;
       }
@@ -224,12 +403,6 @@ document.addEventListener('click', (event) => {
         isClickOnNewsletter = true;
       }
 
-      // Close the modal only if:
-      // - The click is outside the modal content
-      // - Not on header, not on footer
-      // - Not on any newsletter form
-      // - Not on the info button
-      // - Not on the language button
       if (
         !isClickInsideModal &&
         !isClickOnHeader &&
@@ -244,100 +417,6 @@ document.addEventListener('click', (event) => {
   }
 });
 
+// Openers
 toggleInfoBtn.addEventListener('click', () => loadModalContent(base + 'modal-info.html'));
 toggleBookBtn.addEventListener('click', () => loadModalContent(base + 'modal-book.html'));
-
-//Mobile: start / stop Carousel
-const images = [
-  `${base}images/IMG-001_MARIA_STUDIO.jpg`,
-  `${base}images/IMG-002_MARIA_STUDIO.jpg`,
-  `${base}images/IMG-003_MARIA_STUDIO.jpg`,
-  `${base}images/IMG-004_MARIA_STUDIO.jpg`,
-  `${base}images/IMG-005_MARIA_STUDIO.jpg`,
-  `${base}images/IMG-006_MARIA_STUDIO.jpg`,
-  `${base}images/IMG-007_MARIA_STUDIO.jpg`,
-  `${base}images/IMG-008_MARIA_STUDIO.jpg`,
-  `${base}images/IMG-009_MARIA_STUDIO.jpg`,
-  `${base}images/IMG-010_MARIA_STUDIO.jpg`,
-];
-
-console.log("modal: " + images[0]);
-
-let currentIndex = 0;
-let intervalId = null;
-
-function showImage(index) {
-  const carouselImage = document.getElementById('carousel-image');
-  const imageCounter = document.getElementById('image-counter');
-
-  if (carouselImage) {
-    carouselImage.src = images[index];
-    imageCounter.innerText = `${String(index + 1).padStart(2, '0')}/${String(images.length).padStart(2, '0')}`;
-  }
-}
-
-function resetInterval() {
-  stopCarousel();
-  startCarousel();
-}
-
-function nextImage() {
-  currentIndex = (currentIndex + 1) % images.length;
-  showImage(currentIndex);
-  resetInterval();
-}
-
-function prevImage() {
-  currentIndex = (currentIndex - 1 + images.length) % images.length;
-  showImage(currentIndex);
-  resetInterval();
-}
-
-let touchstartX = 0;
-let touchendX = 0;
-
-function handleGesture() {
-  if (touchendX < touchstartX) nextImage();
-  if (touchendX > touchstartX) prevImage();
-}
-
-function startCarousel() {
-  if (!intervalId) {
-    intervalId = setInterval(nextImage, 5000);
-    showImage(currentIndex); // Show the first image immediately
-  }
-}
-
-function stopCarousel() {
-  if (intervalId) {
-    clearInterval(intervalId);
-    intervalId = null;
-  }
-}
-
-function initializeCarousel() {
-  showImage(currentIndex);
-  const carousel = document.getElementById('main-01-carousel');
-  const carouselImage = document.getElementById('carousel-image');
-  if (carousel && carouselImage) {
-    carousel.addEventListener('touchstart', e => {
-      touchstartX = e.changedTouches[0].screenX;
-    });
-    carousel.addEventListener('touchend', e => {
-      touchendX = e.changedTouches[0].screenX;
-      handleGesture();
-    });
-    carouselImage.addEventListener('click', e => {
-      const clickX = e.clientX;
-      const imageWidth = carouselImage.clientWidth;
-      const clickPosition = clickX / imageWidth;
-      if (clickPosition < 0.5) {
-        prevImage();
-      } else {
-        nextImage();
-      }
-    });
-  }
-  document.addEventListener('modalOpened', startCarousel);
-  document.addEventListener('modalClosed', stopCarousel);
-}

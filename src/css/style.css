@@ -307,7 +307,7 @@ button:hover {
   width: 85%;
 }
 
-#number-digit-underline{
+.number-digit-underline{
   margin-left: auto; /* Pushes the element to the right within flex container */
   font-size: 10px;
   border-bottom: 0.533px solid #000;
@@ -317,7 +317,7 @@ a:hover {
   cursor: text; 
 }
 
-#pdf { 
+.pdf-link { 
   text-decoration-line: underline;
   text-decoration-thickness: 0.533px;
   text-underline-offset: 2.6px;
