@@ -1,34 +1,126 @@
 import myHelpers from './helper.js';
 const base = import.meta.env.BASE_URL;
 
+// Config: toast durations
+const TOAST_SUCCESS_MS = 7000; // success toast duration (ms)
+const TOAST_ERROR_MS   = 0;    // server error toast; 0 = don't auto-hide
+
 // ✅ Ping Render backend early
 fetch('https://mariastudio-backend.onrender.com/ping')
   .then(() => console.log("🟢 Render server pinged"))
   .catch(() => console.warn("⚠️ Could not ping backend"));
 
-document.addEventListener('modalOpened', () => {
-  const input = document.querySelector("#phone");
-  window.intlTelInput(input, {
-    loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.2.1/build/js/utils.js"),
-    initialCountry: "auto",
-    geoIpLookup: (success, failure) => {
-      fetch("https://ipapi.co/json")
-        .then((res) => res.json())
-        .then((data) => success(data.country_code))
-        .catch(() => failure());
-    },
-    nationalMode: false,
-    strictMode: true
-  });;
+/* ---------------------------
+   Toast (loading/success/error)
+   - Moves toast to <body> so it isn't hidden by header/modal z-index
+   - Positions it just under the header on any breakpoint
+--------------------------- */
+function ensureToast() {
+  // If there's no toast, create one. If it exists inside the modal, move it to <body>.
+  let toast = document.getElementById('form-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'form-toast';
+    toast.className = 'toast';
+    toast.setAttribute('aria-live', 'polite');
+    toast.setAttribute('role', 'status');
+    toast.innerHTML = `
+      <span class="toast__spinner" aria-hidden="true"></span>
+      <span id="toast-text">Sending your booking…</span>
+    `;
+    document.body.appendChild(toast);
+  } else if (toast.parentElement !== document.body) {
+    document.body.appendChild(toast);
+  }
+  // Make sure it sits above everything
+  toast.style.zIndex = '2000';
+  return toast;
+}
 
+function positionToast() {
+  const toast = document.getElementById('form-toast');
+  const header = document.getElementById('idheader');
+  if (!toast || !header) return;
+  const headerHeight = Math.ceil(header.getBoundingClientRect().height);
+  toast.style.top = `${headerHeight + 8}px`; // always just below header
+  toast.style.left = '50%';
+  toast.style.transform = toast.classList.contains('toast--show')
+    ? 'translate(-50%, 0)'
+    : 'translate(-50%, -12px)';
+}
+
+function showToast(type, message, durationMs) {
+  const toast = ensureToast();
+  const text = document.getElementById('toast-text');
+  const spinner = toast.querySelector('.toast__spinner');
+
+  // 🔑 cancel any pending hide timeouts (both auto-hide and finalize)
+  if (toast._finalizeTimer) { clearTimeout(toast._finalizeTimer); toast._finalizeTimer = null; }
+  if (toast._hideTimer)     { clearTimeout(toast._hideTimer);     toast._hideTimer     = null; }
+
+  text.textContent = message || '';
+  spinner.style.display = (type === 'loading') ? 'inline-block' : 'none';
+
+  toast.hidden = false;
+  positionToast();
+  requestAnimationFrame(() => toast.classList.add('toast--show'));
+
+  // schedule auto-hide only if a duration is provided
+  if (durationMs && durationMs > 0) {
+    toast._hideTimer = setTimeout(hideToast, durationMs);
+  }
+}
+
+function hideToast() {
+  const toast = document.getElementById('form-toast');
+  if (!toast || toast.hidden) return;
+
+  toast.classList.remove('toast--show');
+
+  // clear any pending timers
+  if (toast._hideTimer) { clearTimeout(toast._hideTimer); toast._hideTimer = null; }
+  if (toast._finalizeTimer) { clearTimeout(toast._finalizeTimer); toast._finalizeTimer = null; }
+
+  // schedule the final “hidden = true” after the CSS fade (~200ms)
+  toast._finalizeTimer = setTimeout(() => {
+    toast.hidden = true;
+    toast._finalizeTimer = null;
+  }, 200);
+}
+
+// Keep toast positioned correctly on open/resize
+window.addEventListener('resize', positionToast);
+document.addEventListener('modalOpened', positionToast);
+
+/* ---------------------------
+   Modal open bootstrap
+--------------------------- */
+document.addEventListener('modalOpened', () => {
+
+  if (!document.getElementById('main-book-01')) return;
+
+  // Phone input (intl-tel-input)
+  const input = document.querySelector("#phone");
+  if (input && window.intlTelInput) {
+    window.intlTelInput(input, {
+      loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.2.1/build/js/utils.js"),
+      initialCountry: "auto",
+      geoIpLookup: (success, failure) => {
+        fetch("https://ipapi.co/json")
+          .then((res) => res.json())
+          .then((data) => success(data.country_code))
+          .catch(() => failure());
+      },
+      nationalMode: false,
+      strictMode: true
+    });
+  }
+
+  // Radios + dynamic fields
   const yesRadio = document.getElementById('firsttime-yes');
   const noRadio = document.getElementById('firsttime-no');
-  if (yesRadio) {
-    yesRadio.addEventListener('click', toggleFirstTimeBooking);
-  }
-  if (noRadio) {
-    noRadio.addEventListener('click', toggleFirstTimeBooking);
-  }
+  if (yesRadio) yesRadio.addEventListener('click', toggleFirstTimeBooking);
+  if (noRadio)  noRadio.addEventListener('click', toggleFirstTimeBooking);
 
   const projectTypeDropdown = document.getElementById('project-type');
   if (projectTypeDropdown) {
@@ -36,83 +128,74 @@ document.addEventListener('modalOpened', () => {
   }
 
   const equipmentListReadyYes = document.getElementById('equipmentlistreadyyes');
-  const equipmentListReadyNo = document.getElementById('equipmentlistreadyno');
-  if (equipmentListReadyYes) {
-    equipmentListReadyYes.addEventListener('click', toggleEQListFields);
-  }
-  if (equipmentListReadyNo) {
-    equipmentListReadyNo.addEventListener('click', toggleEQListFields);
-  }
+  const equipmentListReadyNo  = document.getElementById('equipmentlistreadyno');
+  if (equipmentListReadyYes) equipmentListReadyYes.addEventListener('click', toggleEQListFields);
+  if (equipmentListReadyNo)  equipmentListReadyNo.addEventListener('click', toggleEQListFields);
 
   const billingDetailsSame = document.getElementById('billingdetails-same');
-  const billingDetailsNew = document.getElementById('billingdetails-new');
-  if (billingDetailsSame) {
-    billingDetailsSame.addEventListener('click', toggleBillingDetails);
-  }
-  if (billingDetailsNew) {
-    billingDetailsNew.addEventListener('click', toggleBillingDetails);
-  }
+  const billingDetailsNew  = document.getElementById('billingdetails-new');
+  if (billingDetailsSame) billingDetailsSame.addEventListener('click', toggleBillingDetails);
+  if (billingDetailsNew)  billingDetailsNew.addEventListener('click', toggleBillingDetails);
 
   initializeBookingForm();
-  // initializeDatePickers();
 });
 
+/* ---------------------------
+   UI Toggles
+--------------------------- */
 function toggleFirstTimeBooking() {
   const yesRadio = document.getElementById('firsttime-yes');
   const noRadio = document.getElementById('firsttime-no');
   const imgYes = document.getElementById('img-yes');
   const imgNo = document.getElementById('img-no');
   const youAreaContainer = document.getElementById('youarea-container');
-  // const billingDetailsOptions = document.getElementById('billing-details-options');
   const billingDetailsContainer = document.getElementById('billing-details-container');
   const billingDetailsSame = document.getElementById('billingdetails-same');
 
   if (yesRadio.checked) {
-    imgYes.src = base + '/radio_button_checked.png';
-    imgNo.src = base + '/radio_button_unchecked.png';
+    imgYes.src = `${base}radio_button_checked.png`;
+    imgNo.src  = `${base}radio_button_unchecked.png`;
     youAreaContainer.classList.remove('hidden');
-    // billingDetailsOptions.classList.add('hidden');
     billingDetailsContainer.classList.remove('hidden');
-    billingDetailsSame.checked = true; // Preselect "Same Billing details as usual"
+    if (billingDetailsSame) billingDetailsSame.checked = true;
   } else if (noRadio.checked) {
-    imgYes.src = base + '/radio_button_unchecked.png';
-    imgNo.src = base + '/radio_button_checked.png';
+    imgYes.src = `${base}radio_button_unchecked.png`;
+    imgNo.src  = `${base}radio_button_checked.png`;
     youAreaContainer.classList.add('hidden');
-    // billingDetailsOptions.classList.remove('hidden');
-    billingDetailsContainer.classList.add('hidden'); // Hide initially until an option is selected
+    billingDetailsContainer.classList.add('hidden');
   }
 }
 
 function toggleInputsBasedOnProjectType() {
   const projectType = document.getElementById('project-type').value;
   const photographerContainer = document.getElementById('photographer-container');
-  const brandNameContainer = document.getElementById('brandname-container');
+  const brandNameContainer    = document.getElementById('brandname-container');
   const magazineNameContainer = document.getElementById('magazinename-container');
-  const tellUsMoreContainer = document.getElementById('tellusmore-container');
+  const tellUsMoreContainer   = document.getElementById('tellusmore-container');
 
-  // Show or hide Photographer based on project type
+  // Photographer for all except Ecommerce
   if (projectType === 'Ecommerce') {
     photographerContainer.classList.add('hidden');
   } else {
     photographerContainer.classList.remove('hidden');
   }
 
-  // Show or hide Brand name based on project type
-  if (projectType === 'Campaign' || projectType === 'Lookbook' || projectType === 'Ecommerce') {
+  // Brand for Campaign/Lookbook/Ecommerce
+  if (['Campaign','Lookbook','Ecommerce'].includes(projectType)) {
     brandNameContainer.classList.remove('hidden');
   } else {
     brandNameContainer.classList.add('hidden');
   }
 
-  // Show or hide Magazine name based on project type
+  // Magazine for Editorial
   if (projectType === 'Editorial') {
     magazineNameContainer.classList.remove('hidden');
   } else {
     magazineNameContainer.classList.add('hidden');
   }
 
-  // Show or hide Tell us more based on project type
-  if (projectType === 'Personal' || projectType === 'Other') {
+  // Tell us more for Personal/Other
+  if (['Personal','Other'].includes(projectType)) {
     tellUsMoreContainer.classList.remove('hidden');
   } else {
     tellUsMoreContainer.classList.add('hidden');
@@ -121,107 +204,90 @@ function toggleInputsBasedOnProjectType() {
 
 function toggleEQListFields() {
   const equipmentListReadyYes = document.getElementById('equipmentlistreadyyes');
-  const equipmentListReadyNo = document.getElementById('equipmentlistreadyno');
+  const equipmentListReadyNo  = document.getElementById('equipmentlistreadyno');
   const eqImgYes = document.getElementById('eq-img-yes');
-  const eqImgNo = document.getElementById('eq-img-no');
+  const eqImgNo  = document.getElementById('eq-img-no');
   const eqlistContainer = document.getElementById('eqlist-container');
 
   if (equipmentListReadyYes.checked) {
-      eqImgYes.src = base + '/radio_button_checked.png';
-      eqImgNo.src = base + '/radio_button_unchecked.png';
-      eqlistContainer.classList.remove('hidden');
+    eqImgYes.src = `${base}radio_button_checked.png`;
+    eqImgNo.src  = `${base}radio_button_unchecked.png`;
+    eqlistContainer.classList.remove('hidden');
   } else if (equipmentListReadyNo.checked) {
-      eqImgYes.src = base + '/radio_button_unchecked.png';
-      eqImgNo.src = base + '/radio_button_checked.png';
-      eqlistContainer.classList.add('hidden');
+    eqImgYes.src = `${base}radio_button_unchecked.png`;
+    eqImgNo.src  = `${base}radio_button_checked.png`;
+    eqlistContainer.classList.add('hidden');
   }
 }
 
 function toggleBillingDetails() {
   const billingDetailsSame = document.getElementById('billingdetails-same');
-  const billingDetailsNew = document.getElementById('billingdetails-new');
+  const billingDetailsNew  = document.getElementById('billingdetails-new');
   const billingImgSame = document.getElementById('billing-img-same');
-  const billingImgNew = document.getElementById('billing-img-new');
+  const billingImgNew  = document.getElementById('billing-img-new');
   const billingDetailsContainer = document.getElementById('billing-details-container');
 
   if (billingDetailsSame.checked) {
-      billingImgSame.src = base + '/radio_button_checked.png';
-      billingImgNew.src = base + '/radio_button_unchecked.png';
-      billingDetailsContainer.classList.add('hidden');
+    billingImgSame.src = `${base}radio_button_checked.png`;
+    billingImgNew.src  = `${base}radio_button_unchecked.png`;
+    billingDetailsContainer.classList.add('hidden');
   } else if (billingDetailsNew.checked) {
-      billingImgSame.src = base + '/radio_button_unchecked.png';
-      billingImgNew.src = base + '/radio_button_checked.png';
-      billingDetailsContainer.classList.remove('hidden');
+    billingImgSame.src = `${base}radio_button_unchecked.png`;
+    billingImgNew.src  = `${base}radio_button_checked.png`;
+    billingDetailsContainer.classList.remove('hidden');
   }
 }
 
+/* ---------------------------
+   Date pickers
+--------------------------- */
 function initializeDatePickers() {
-
   const appointmentDates = document.getElementById('appointment-dates');
+   if (!appointmentDates) return;  // ← prevents the null .placeholder error
+
   const today = new Date();
   const yyyy = today.getFullYear();
-  const mm   = String(today.getMonth() + 1).padStart(2, '0'); // months are 0-based
+  const mm   = String(today.getMonth() + 1).padStart(2, '0');
   const dd   = String(today.getDate()).padStart(2, '0');
+  appointmentDates.placeholder = `${yyyy}-${mm}-${dd}`;
 
-  // e.g. "2025-01-08"
-  const formattedToday = `${yyyy}-${mm}-${dd}`;
-
-  // Only set the placeholder, not the actual value
-  appointmentDates.placeholder = formattedToday;
-
-  flatpickr("#appointment-dates", {
-    mode: "multiple",
-    dateFormat: "Y-m-d",
-  });
+  if (window.flatpickr) {
+    flatpickr("#appointment-dates", {
+      mode: "multiple",
+      dateFormat: "Y-m-d",
+    });
+  }
 }
 
-
+/* ---------------------------
+   Booking form wiring
+--------------------------- */
 function initializeBookingForm() {
+
+  // If booking form isn’t on the page, bail out
+  if (!document.getElementById('form-part-01')) return;
+
   initializeDatePickers();
+
   const nextBtn1 = document.getElementById('nextBtn1');
   const nextBtn2 = document.getElementById('nextBtn2');
   const backBtn2 = document.getElementById('backBtn2');
   const backBtn3 = document.getElementById('backBtn3');
   const submitBtn = document.querySelector('#form-part-03 button[type="submit"]');
 
-  if (nextBtn1) {
-    nextBtn1.removeEventListener('click', handleNextBtn1); // Ensure no duplicate event listeners
-    nextBtn1.addEventListener('click', handleNextBtn1);
-  }
-  if (nextBtn2) {
-    nextBtn2.removeEventListener('click', handleNextBtn2); // Ensure no duplicate event listeners
-    nextBtn2.addEventListener('click', handleNextBtn2);
-  }
-  if (backBtn2) {
-    backBtn2.removeEventListener('click', handleBackBtn2); // Ensure no duplicate event listeners
-    backBtn2.addEventListener('click', handleBackBtn2);
-  }
-  if (backBtn3) {
-    backBtn3.removeEventListener('click', handleBackBtn3); // Ensure no duplicate event listeners
-    backBtn3.addEventListener('click', handleBackBtn3);
-  }
-  if (submitBtn) {
-    submitBtn.removeEventListener('click', handleFormSubmit); // Ensure no duplicate event listeners
-    submitBtn.addEventListener('click', handleFormSubmit);
-  }
+  if (nextBtn1) { nextBtn1.removeEventListener('click', handleNextBtn1); nextBtn1.addEventListener('click', handleNextBtn1); }
+  if (nextBtn2) { nextBtn2.removeEventListener('click', handleNextBtn2); nextBtn2.addEventListener('click', handleNextBtn2); }
+  if (backBtn2) { backBtn2.removeEventListener('click', handleBackBtn2); backBtn2.addEventListener('click', handleBackBtn2); }
+  if (backBtn3) { backBtn3.removeEventListener('click', handleBackBtn3); backBtn3.addEventListener('click', handleBackBtn3); }
+  if (submitBtn){ submitBtn.removeEventListener('click', handleFormSubmit); submitBtn.addEventListener('click', handleFormSubmit); }
 }
 
-
+// No scroll-to-error: just highlight via CSS .error
 function handleNextBtn1() {
   const formPart1 = document.getElementById('form-part-01');
   if (validateForm(formPart1)) {
     showNextPart(1);
-    enableSwiping()
-  
-    // let modalFooterPlaceholder = document.getElementsByClassName('modal-footer-placeholder');
-    // if (modalFooterPlaceholder.length > 0 && isMobile()) {
-    //   console.log('ismobile');
-    //   modalFooterPlaceholder[0].style.position = 'static';
-    // let targetElement = document.getElementById('form-part-02');
-    // if (targetElement) {
-    //   targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    // }
-    // }
+    enableSwiping();
   }
 }
 
@@ -232,36 +298,23 @@ function handleNextBtn2() {
   }
 }
 
-function handleBackBtn2() {
-  showPreviousPart(2);
-}
-
-function handleBackBtn3() {
-  showPreviousPart(3);
-}
-
-// function handleFormSubmit(event) {
-//   //testing
-//   event.preventDefault(); // Prevent form submission and page reload
-
-//   const formPart3 = document.getElementById('form-part-03');
-//   if (validateForm(formPart3)) {
-//     logFormData();  // Log the form data here after validation
-//     // Here you can also manually trigger an AJAX call to submit the form if needed
-//   }
-// }
+function handleBackBtn2() { showPreviousPart(2); }
+function handleBackBtn3() { showPreviousPart(3); }
 
 function handleFormSubmit(event) {
-  event.preventDefault(); // Prevent form reload
-  document.getElementById('form-loading').classList.remove('hidden'); // Show loading
-  document.getElementById('form-success').classList.add('hidden');
-  document.getElementById('form-error').classList.add('hidden');
+  event.preventDefault();
+
+
+  const submitBtn = event.currentTarget;
+  if (submitBtn) submitBtn.disabled = true;
 
   const formPart3 = document.getElementById('form-part-03');
   if (validateForm(formPart3)) {
-    logFormData();
+    showToast('loading', 'Sending your booking…');
+    logFormData(submitBtn);
   } else {
-    document.getElementById('form-loading').classList.add('hidden');
+    if (submitBtn) submitBtn.disabled = false;
+    hideToast(); // remove loading
   }
 }
 
@@ -272,11 +325,11 @@ function showNextPart(currentPart) {
     const nextBook = document.getElementById(`main-book-0${currentPart + 1}`);
     if (nextBook) {
       nextBook.style.display = 'block';
-        if (myHelpers.isMobile() === true) {
-          currentBook.style.display = 'none';
-          let backBtn = document.getElementById(`backBtn${currentPart + 1}`);
-          backBtn.style.display = 'inline-block';
-        }
+      if (myHelpers.isMobile() === true) {
+        currentBook.style.display = 'none';
+        const backBtn = document.getElementById(`backBtn${currentPart + 1}`);
+        if (backBtn) backBtn.style.display = 'inline-block';
+      }
     }
   }
 }
@@ -284,7 +337,7 @@ function showNextPart(currentPart) {
 function showPreviousPart(currentPart) {
   const currentBook = document.getElementById(`main-book-0${currentPart}`);
   if (currentBook) {
-    const previousBook = document.getElementById(`main-book-0${currentPart -1}`);
+    const previousBook = document.getElementById(`main-book-0${currentPart - 1}`);
     if (previousBook) {
       previousBook.style.display = 'block';
       currentBook.style.display = 'none';
@@ -295,20 +348,15 @@ function showPreviousPart(currentPart) {
 function validateForm(form) {
   let valid = true;
 
-  // Validate required input, select, and textarea elements
   const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
   inputs.forEach(input => {
-    // Trim leading/trailing spaces
     const value = input.value.trim();
-
-    // Check if the field is empty
     if (!value) {
       valid = false;
       input.classList.add('error');
     } else {
-      // If it's the email field, validate the email format
       if (input.type === 'text' && input.name === 'contact_email') {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple regex pattern
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(value)) {
           valid = false;
           input.classList.add('error');
@@ -316,18 +364,15 @@ function validateForm(form) {
           input.classList.remove('error');
         }
       } else {
-        // Remove error if it's not the email field or if it's valid
         input.classList.remove('error');
       }
     }
   });
 
-  // Custom validation for radio button groups
   const radioGroups = form.querySelectorAll('.custom-radio');
   radioGroups.forEach(group => {
     const radios = group.querySelectorAll('input[type="radio"]');
     const isSelected = Array.from(radios).some(radio => radio.checked);
-
     if (!isSelected) {
       valid = false;
       group.classList.add('error');
@@ -339,7 +384,10 @@ function validateForm(form) {
   return valid;
 }
 
-function logFormData() {
+/* ---------------------------
+   Submission
+--------------------------- */
+function logFormData(submitBtn) {
   const formData1 = new FormData(document.getElementById('form-part-01'));
   const formData2 = new FormData(document.getElementById('form-part-02'));
   const formData3 = new FormData(document.getElementById('form-part-03'));
@@ -351,12 +399,10 @@ function logFormData() {
     date: new Date().toISOString()
   };
 
-  // Optional: handle the "youarea" field logic
   if (!combinedData.contact_firsttime || combinedData.contact_firsttime === 'no') {
     combinedData.youarea = '';
   }
 
-  // Optional: handle file upload (safely omit or base64 encode if you want)
   const fileInput = document.querySelector('input[type="file"]');
   const file = fileInput?.files[0];
 
@@ -365,18 +411,15 @@ function logFormData() {
     reader.onload = function (e) {
       combinedData.file_name = file.name;
       combinedData.file_content = e.target.result;
-
-      // Submit after encoding file
-      sendFormDataToServer(combinedData);
+      sendFormDataToServer(combinedData, submitBtn);
     };
     reader.readAsDataURL(file);
   } else {
-    // Submit directly without file
-    sendFormDataToServer(combinedData);
+    sendFormDataToServer(combinedData, submitBtn);
   }
 }
 
-function sendFormDataToServer(data) {
+function sendFormDataToServer(data, submitBtn) {
   fetch('https://mariastudio-backend.onrender.com/submit-booking', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -386,62 +429,48 @@ function sendFormDataToServer(data) {
       if (!res.ok) throw new Error("Failed to submit booking");
       return res.json();
     })
-    .then(response => {
+   .then(response => {
       console.log('Booking submitted successfully:', response);
-      document.getElementById('form-loading').classList.add('hidden');
-      document.getElementById('form-success').classList.remove('hidden');
+      showToast('success', 'Thank you! Your booking was submitted.', TOAST_SUCCESS_MS);
+      if (submitBtn) submitBtn.disabled = false;
     })
     .catch(err => {
-      console.error('Error submitting booking:', err);
-      document.getElementById('form-loading').classList.add('hidden');
-      document.getElementById('form-error').classList.remove('hidden');
-    });
+    console.error('Error submitting booking:', err);
+    showToast('error', 'Something went wrong. Please try again.', TOAST_ERROR_MS);
+    if (submitBtn) submitBtn.disabled = false;
+  });
 }
 
+/* ---------------------------
+   Swipe navigation (mobile)
+--------------------------- */
 function enableSwiping() {
-  // Grab all the “main-book” elements
   const mainBookElements = document.querySelectorAll('[id^="main-book-"]');
   
   mainBookElements.forEach((element) => {
-    // Each element ID is like “main-book-01”, “main-book-02”, etc.
-    // We'll parse out the step number (e.g., 1 or 2 or 3).
     const partNumber = parseInt(element.id.split('-')[2], 10);
     
     let startX = 0;
     let startY = 0;
     
     element.addEventListener('touchstart', (e) => {
-      // Record initial touch positions
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
     });
 
     element.addEventListener('touchend', (e) => {
-      // Compare end positions to start
       const endX = e.changedTouches[0].clientX;
       const endY = e.changedTouches[0].clientY;
       const deltaX = endX - startX;
       const deltaY = endY - startY;
 
-      // We only want to detect mostly horizontal swipes => ignore large vertical movement
-      if (Math.abs(deltaY) > 50) {
-        return; // Probably a vertical scroll, so ignore
-      }
+      if (Math.abs(deltaY) > 50) return;
 
-      // If user swiped left more than 50px => go to next part
       if (deltaX < -50) {
-        // For example, swiping left on part 1 => show part 2
         showNextPart(partNumber);
-      }
-      // If user swiped right more than 50px => go to previous part
-      else if (deltaX > 50) {
+      } else if (deltaX > 50) {
         showPreviousPart(partNumber);
       }
     });
   });
 }
-
-// Reinitialize when the modal is opened
-document.addEventListener('modalOpened', initializeBookingForm);
-
-
