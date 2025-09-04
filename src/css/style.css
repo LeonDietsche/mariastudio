@@ -595,23 +595,10 @@ footer{
 }
 
 #cover img {
-  position: relative;
-  z-index: 1;
   width: 75%;
   max-width: 800px;
   margin: auto;
   height: auto;
-}
-
-/* single splash layer (inserted as <div id="cover-splash"> inside #cover) */
-#cover-splash {
-  position: absolute;
-  inset: 0;
-  background: #fff;
-  z-index: 0;             /* behind the logo */
-  opacity: 1;
-  transition: opacity 0.9s ease; /* was .5s */
-  pointer-events: none;   /* never blocks touches/clicks */
 }
 
 .form-part {
