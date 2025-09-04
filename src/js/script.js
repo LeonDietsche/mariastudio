@@ -11,12 +11,8 @@ var pinchDistanceStart = 0, pinchDistanceEnd = 0;
 init();
 animate();
 
-function wW() {
-  return window.innerWidth;
-}
-function wH() {
-  return window.innerHeight;
-}
+function wW() { return window.innerWidth; }
+function wH() { return window.innerHeight; }
 
 function init() {
   var container, cover, mesh;
@@ -105,12 +101,18 @@ function onMouseUp(e) {
   }, 500);
 }
 
+function clampFocal(f) {
+  return Math.max(minFocalLength, Math.min(maxFocalLength, f));
+}
+
 function onMouseWheel(e) {
   e.preventDefault();
 
   const zoomSpeed = 0.5;
-  focalLength += e.deltaY * zoomSpeed * 0.01;
-  focalLength = Math.max(minFocalLength, Math.min(maxFocalLength, focalLength));
+  // Maus nach OBEN (deltaY < 0) => reinzoomen (Brennweite erhöhen)
+  // Maus nach UNTEN (deltaY > 0) => rauszoomen (Brennweite verringern)
+  focalLength -= e.deltaY * zoomSpeed * 0.01; // ⬅ changed (vorher: +=)
+  focalLength = clampFocal(focalLength);
 
   camera.setFocalLength(focalLength);
   camera.updateProjectionMatrix();
@@ -135,8 +137,9 @@ function onTouchMove(e) {
     pinchDistanceEnd = getPinchDistance(e.touches);
     var delta = pinchDistanceEnd - pinchDistanceStart;
 
-    focalLength -= delta * 0.05;
-    focalLength = Math.max(minFocalLength, Math.min(maxFocalLength, focalLength));
+    // Finger nach außen (delta > 0) => reinzoomen (Brennweite erhöhen)
+    focalLength += delta * 0.05; // ⬅ changed (vorher: -=)
+    focalLength = clampFocal(focalLength);
 
     camera.setFocalLength(focalLength);
     camera.updateProjectionMatrix();
