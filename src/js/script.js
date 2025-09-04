@@ -63,7 +63,7 @@ function init() {
 
   // ✅ Use small JPG on mobile, full JPG on desktop
   const texFile = isMobile()
-    ? '250107_180.jpg'
+    ? '250506_ms_studio_360_20-150.jpg'
     : '250506_ms_studio_360_20-150.jpg';
   const texPath = (import.meta.env.BASE_URL || '/') + texFile;
 
