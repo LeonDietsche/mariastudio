@@ -4,9 +4,9 @@ import * as THREE from 'three';
 const MOBILE_BP = 1275;
 
 // 🔧 Device-specific focal presets
-const MOBILE_FOCAL = 16;      // starting focal on mobile (wider)
+const MOBILE_FOCAL = 14;      // starting focal on mobile (wider)
 const DESKTOP_FOCAL = 10;     // starting focal on desktop (tighter)
-const MOBILE_MIN = 16, MOBILE_MAX = 35;
+const MOBILE_MIN = 14, MOBILE_MAX = 35;
 const DESKTOP_MIN = 10, DESKTOP_MAX = 35;
 
 // Core state
@@ -63,7 +63,7 @@ function init() {
 
   // ✅ Use small JPG on mobile, full JPG on desktop
   const texFile = isMobile()
-    ? '250506_ms_studio_360_20-150.jpg'
+    ? '250107_180.jpg'
     : '250506_ms_studio_360_20-150.jpg';
   const texPath = (import.meta.env.BASE_URL || '/') + texFile;
 
