@@ -1,15 +1,24 @@
-// script.js
+// script.js (responsive focal length via focalLength in mm)
 import * as THREE from 'three';
 
 const MOBILE_BP = 1275;
 
+// 🔧 Device-specific focal presets
+const MOBILE_FOCAL = 24;      // starting focal on mobile (wider)
+const DESKTOP_FOCAL = 10;     // starting focal on desktop (tighter)
+const MOBILE_MIN = 24, MOBILE_MAX = 35;
+const DESKTOP_MIN = 10, DESKTOP_MAX = 35;
+
+// Core state
 var camera, scene, renderer;
 var isUserInteracting = false, isPinching = false, lon = 0, lat = 0, phi = 0, theta = 0;
 
-var focalLength = 10; // Starting focal length in mm
-var minFocalLength = 10; // Wide angle limit
-var maxFocalLength = 35; // Zoom-in limit
+// Focal state (set by applyDeviceCameraPreset)
+var focalLength;              // current focal length in mm
+var minFocalLength;           // lower clamp
+var maxFocalLength;           // upper clamp
 var pinchDistanceStart = 0, pinchDistanceEnd = 0;
+var wasMobile = null;         // tracks last-known device class to react on resize
 
 init();
 animate();
@@ -18,6 +27,24 @@ function wW() { return window.innerWidth; }
 function wH() { return window.innerHeight; }
 function isMobile() { return wW() <= MOBILE_BP; }
 
+function applyDeviceCameraPreset() {
+  const mobile = isMobile();
+
+  // On first run, pick a base focal. On later runs, keep current focal but re-clamp.
+  if (wasMobile === null) {
+    focalLength = mobile ? MOBILE_FOCAL : DESKTOP_FOCAL;
+  }
+
+  minFocalLength = mobile ? MOBILE_MIN : DESKTOP_MIN;
+  maxFocalLength = mobile ? MOBILE_MAX : DESKTOP_MAX;
+
+  focalLength = clampFocal(focalLength);
+  camera.setFocalLength(focalLength);
+  camera.updateProjectionMatrix();
+
+  wasMobile = mobile;
+}
+
 function init() {
   var container = document.getElementById("studio");
   var cover = document.getElementById("cover");
@@ -25,8 +52,6 @@ function init() {
 
   camera = new THREE.PerspectiveCamera(70, wW() / wH(), 1, 2000);
   camera.target = new THREE.Vector3(0, 0, 0);
-  camera.setFocalLength(focalLength);
-  camera.updateProjectionMatrix();
 
   scene = new THREE.Scene();
 
@@ -54,6 +79,10 @@ function init() {
   renderer.setSize(wW(), wH());
   container.appendChild(renderer.domElement);
 
+  // 🔑 Apply focal + clamps per device AFTER camera exists
+  applyDeviceCameraPreset();
+
+  // Event listeners
   cover.addEventListener("mousedown", onMouseDown, false);
   cover.addEventListener("mousemove", onMouseMove, false);
   cover.addEventListener("mouseup", onMouseUp, false);
@@ -69,7 +98,19 @@ function init() {
 function onWindowResize() {
   camera.aspect = wW() / wH();
   camera.updateProjectionMatrix();
-  renderer.setPixelRatio(isMobile() ? 1 : Math.min(2, window.devicePixelRatio));
+
+  // If device class flips across breakpoint, re-apply device preset
+  const mobile = isMobile();
+  if (mobile !== wasMobile) {
+    applyDeviceCameraPreset();
+  } else {
+    // keep current focal but ensure it's within clamps
+    focalLength = clampFocal(focalLength);
+    camera.setFocalLength(focalLength);
+    camera.updateProjectionMatrix();
+  }
+
+  renderer.setPixelRatio(mobile ? 1 : Math.min(2, window.devicePixelRatio));
   renderer.setSize(wW(), wH());
 }
 
