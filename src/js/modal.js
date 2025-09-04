@@ -34,6 +34,85 @@ closeModalBtn.addEventListener('click', () => toggleModal());
 
 let currentContentUrl = null;
 
+// Track current mode to react to breakpoint changes
+let currentMode = myHelpers.isMobile() ? 'mobile' : 'desktop';
+
+// hide any desktop overlays when leaving desktop
+function hideHoverOverlays() {
+  const imageContainer = document.getElementById('image-container');
+  const videoContainer = document.getElementById('video-container');
+  if (imageContainer) {
+    imageContainer.style.opacity = 0;
+    imageContainer.style.display = 'none';
+    imageContainer.style.backgroundImage = '';
+  }
+  if (videoContainer) {
+    videoContainer.style.opacity = 0;
+    videoContainer.style.display = 'none';
+    videoContainer.innerHTML = '';
+  }
+}
+
+// Ensure header/footer visuals match current mode + modal state
+function syncHeaderFooterForMode() {
+  const isOpen = modal.style.display === 'block';
+  if (currentMode === 'mobile') {
+    if (isOpen) {
+      header.style.background = 'white';
+      header.style.opacity = 1;
+      footer.style.opacity = 0;          // hide footer under mobile modal
+    } else {
+      header.style.background = '';
+      header.style.opacity = 1;
+      footer.style.opacity = 1;          // footer visible when modal closed
+    }
+  } else {
+    // desktop
+    header.style.background = '';
+    header.style.opacity = 1;
+    footer.style.opacity = 1;            // always visible on desktop
+  }
+}
+
+// Apply the right behavior when crossing the 1275px breakpoint
+function applyMode() {
+  const isMobileNow = myHelpers.isMobile();
+  const newMode = isMobileNow ? 'mobile' : 'desktop';
+  const modeChanged = newMode !== currentMode;
+  currentMode = newMode;
+
+  const isOpen = modal.style.display === 'block';
+
+  if (modeChanged && isOpen) {
+    if (currentMode === 'mobile') {
+      // desktop -> mobile
+      hideHoverOverlays();
+      initializeCarousel();
+      startCarousel();  // guarded by intervalId
+      showImage(0);     // immediate paint
+      const carousel = document.getElementById('main-01-carousel');
+      if (carousel) requestAnimationFrame(() => { carousel.style.opacity = 1; });
+    } else {
+      // mobile -> desktop
+      stopCarousel();
+      initializeDesktopHoverEffect();
+    }
+  }
+
+  // Always sync header/footer styles (fixes footer "stuck" opacity)
+  syncHeaderFooterForMode();
+}
+
+// React to media query changes (exactly matches CSS breakpoint)
+const mq = window.matchMedia('(max-width: 1275px)');
+if (mq && mq.addEventListener) {
+  mq.addEventListener('change', () => applyMode());
+} else if (mq && mq.addListener) {
+  // older Safari fallback
+  mq.addListener(() => applyMode());
+}
+window.addEventListener('resize', () => applyMode()); // extra safety
+
 // Function to toggle the modal display
 function toggleModal(forceOpen = false) {
   const isModalOpen = modal.style.display === 'block';
@@ -59,17 +138,8 @@ function toggleModal(forceOpen = false) {
   const event = new Event(isModalOpen && !forceOpen ? 'modalClosed' : 'modalOpened');
   document.dispatchEvent(event);
 
-  if (myHelpers.isMobile() === true) {
-    if (isModalOpen && !forceOpen) {
-      header.style.background = '';
-      header.style.opacity = 1;
-      footer.style.opacity = 1;
-    } else {
-      header.style.background = 'white';
-      header.style.opacity = 1.0;
-      footer.style.opacity = 0;
-    }
-  }
+  // Keep header/footer in sync for current mode after open/close
+  syncHeaderFooterForMode();
 }
 
 // Function to load the modal content
@@ -86,15 +156,14 @@ async function loadModalContent(url) {
 
   // Show/hide pipes based on which modal is being opened
   if (url.endsWith('modal-book.html')) {
-    toggleBookPipe.style.display = 'inline';   // or 'block'
+    toggleBookPipe.style.display = 'inline';
     toggleInfoPipe.style.display = 'none';
     closeModalBtn.style.display  = 'inline';
   } else if (url.endsWith('modal-info.html')) {
-    toggleInfoPipe.style.display = 'inline';   // or 'block'
+    toggleInfoPipe.style.display = 'inline';
     toggleBookPipe.style.display = 'none';
     closeModalBtn.style.display  = 'inline';
   } else {
-    // Default case: hide both
     toggleBookPipe.style.display = 'none';
     toggleInfoPipe.style.display = 'none';
     closeModalBtn.style.display  = 'none'; 
@@ -124,17 +193,25 @@ async function loadModalContent(url) {
 
     currentContentUrl = url;
 
-    if (myHelpers.isMobile() === false) {
-      initializeDesktopHoverEffect();
-    } else {
+    // initialize behavior for the *current* width
+    if (myHelpers.isMobile()) {
       initializeCarousel();
       startCarousel();
+      showImage(0); // ensure first image is painted to avoid flicker
+      const carousel = document.getElementById('main-01-carousel');
+      if (carousel) requestAnimationFrame(() => { carousel.style.opacity = 1; });
+    } else {
+      initializeDesktopHoverEffect();
+      hideHoverOverlays();
     }
 
     toggleModal(true);
 
+    // ensure future resizes switch smoothly & footer/header synced
+    applyMode();
+
     const event = new Event('modalOpened');
-    document.dispatchEvent(event);  // Dispatch event after modal content is loaded and displayed
+    document.dispatchEvent(event);
   } catch (error) {
     console.error('Failed to load modal content:', error);
   }
@@ -147,10 +224,12 @@ function initializeDesktopHoverEffect() {
   const imageContainer = document.getElementById('image-container');
   const videoContainer = document.getElementById('video-container');
 
+  if (!textItems || !imageContainer) return;
+
   textItems.forEach(item => {
     item.addEventListener('mouseover', event => {
       const text = event.target.innerText.trim().replace(/\.JPG$/i, '.jpg');
-      const imagePath = `${base}images/${text}`; // Adjust the path as needed
+      const imagePath = `${base}images/${text}`;
       modal.style.opacity = 1;
       imageContainer.style.backgroundImage = `url('${imagePath}')`;
       imageContainer.style.opacity = 1;
@@ -164,8 +243,7 @@ function initializeDesktopHoverEffect() {
     });
   });
 
-  // Add hover effect for video item
-  if (videoItem) {
+  if (videoItem && videoContainer) {
     videoItem.addEventListener('mouseover', () => {
       const videoPath = base + `videos/video-001_maria_studio.mp4`;
       modal.style.opacity = 1;
@@ -195,15 +273,11 @@ function handleKeyDown(event) {
 document.addEventListener('keydown', handleKeyDown);
 document.addEventListener('click', (event) => {
   if (myHelpers.isMobile() === false) {
-    // Is the modal currently open?
     if (modal.style.display === 'block') {
-
-      // If we're on the booking modal, don't auto-close at all
       if (currentContentUrl && currentContentUrl.endsWith('modal-book.html')) {
         return;
       }
 
-      // Existing checks:
       const isClickInsideModal      = modalBodyContainer.contains(event.target);
       const isClickOnHeader         = header.contains(event.target);
       const isClickOnFooter         = footer.contains(event.target);
@@ -211,12 +285,10 @@ document.addEventListener('click', (event) => {
       const isClickOnLanguageButton = document.getElementById('toggleLanguageBtn')
                                              .contains(event.target);
 
-      // NEW: Check if the click is inside either newsletter form
       const newsletterFormMobil = document.querySelector('.newsletter-form-mobil');
       const newsletterForm      = document.getElementById('newsletterForm');
       let isClickOnNewsletter   = false;
 
-      // If these elements exist, see if they contain the click target
       if (newsletterFormMobil && newsletterFormMobil.contains(event.target)) {
         isClickOnNewsletter = true;
       }
@@ -224,12 +296,6 @@ document.addEventListener('click', (event) => {
         isClickOnNewsletter = true;
       }
 
-      // Close the modal only if:
-      // - The click is outside the modal content
-      // - Not on header, not on footer
-      // - Not on any newsletter form
-      // - Not on the info button
-      // - Not on the language button
       if (
         !isClickInsideModal &&
         !isClickOnHeader &&
@@ -272,7 +338,9 @@ function showImage(index) {
 
   if (carouselImage) {
     carouselImage.src = images[index];
-    imageCounter.innerText = `${String(index + 1).padStart(2, '0')}/${String(images.length).padStart(2, '0')}`;
+    if (imageCounter) {
+      imageCounter.innerText = `${String(index + 1).padStart(2, '0')}/${String(images.length).padStart(2, '0')}`;
+    }
   }
 }
 
@@ -337,6 +405,9 @@ function initializeCarousel() {
         nextImage();
       }
     });
+
+    // smooth show when entering mobile mode
+    requestAnimationFrame(() => { carousel.style.opacity = 1; });
   }
   document.addEventListener('modalOpened', startCarousel);
   document.addEventListener('modalClosed', stopCarousel);
