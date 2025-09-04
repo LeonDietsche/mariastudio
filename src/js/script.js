@@ -4,9 +4,9 @@ import * as THREE from 'three';
 const MOBILE_BP = 1275;
 
 // 🔧 Device-specific focal presets
-const MOBILE_FOCAL = 14;      // starting focal on mobile (wider)
+const MOBILE_FOCAL = 16;      // starting focal on mobile (wider)
 const DESKTOP_FOCAL = 10;     // starting focal on desktop (tighter)
-const MOBILE_MIN = 14, MOBILE_MAX = 35;
+const MOBILE_MIN = 16, MOBILE_MAX = 35;
 const DESKTOP_MIN = 10, DESKTOP_MAX = 35;
 
 // Core state
