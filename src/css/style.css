@@ -384,6 +384,9 @@ main > div{
 
 #main-01-carousel {
   display: none;
+    /* smooth appearance when it becomes visible in mobile mode */
+  opacity: 0;
+  transition: opacity 0.25s ease;
 }
 
 #main-02 {
