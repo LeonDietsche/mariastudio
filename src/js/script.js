@@ -63,8 +63,8 @@ function init() {
 
   // ✅ Use small JPG on mobile, full JPG on desktop
   const texFile = isMobile()
-    ? '250107_180.jpg'
-    : '250506_ms_studio_360_20-150.jpg';
+    ? '250506_ms_studio_360_20-150_9900-4950.jpg'
+    : '250506_ms_studio_360_20-150_15000-7500.jpg';
   const texPath = (import.meta.env.BASE_URL || '/') + texFile;
 
   const texture = new THREE.TextureLoader().load(texPath);
