@@ -4,8 +4,8 @@ import * as THREE from 'three';
 const MOBILE_BP = 1275;
 
 // Assets (adjust if you change filenames)
-const TEX_DESKTOP = '250506_ms_studio_360_15000-7500.jpg';
-const TEX_MOBILE  = '250506_ms_studio_360_9900-4950.jpg';
+const TEX_DESKTOP = '250506_ms_studio_360_20-150_15000-7500.jpg';
+const TEX_MOBILE  = '250506_ms_studio_360_20-150_9900-4950.jpg';
 
 // 🔧 Focal presets (mm)
 const MOBILE_FOCAL   = 18;       // starting focal on mobile (wider)
