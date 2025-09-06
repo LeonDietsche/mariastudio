@@ -55,6 +55,12 @@ function init() {
   const cover = document.getElementById('cover');
   if (cover) cover.style.opacity = 1;
 
+  // Always keep header/footer normal (no blend mode)
+  const header = document.getElementById('idheader');
+  const footer = document.getElementById('idfooter');
+  if (header) header.style.mixBlendMode = 'normal';
+  if (footer) footer.style.mixBlendMode = 'normal';
+
   // CAMERA
   camera = new THREE.PerspectiveCamera(70, wW() / wH(), 1, 2000);
   camera.target = new THREE.Vector3(0, 0, 0);
