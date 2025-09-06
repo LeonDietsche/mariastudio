@@ -1,15 +1,29 @@
-// script.js
+// script.js — new version + device-specific focal presets
 import * as THREE from 'three';
 
 const MOBILE_BP = 1275;
 
-var camera, scene, renderer;
-var isUserInteracting = false, isPinching = false, lon = 0, lat = 0, phi = 0, theta = 0;
+// Assets (adjust if you change filenames)
+const TEX_DESKTOP = '250506_ms_studio_360_15000-7500.jpg';
+const TEX_MOBILE  = '250506_ms_studio_360_9900-4950.jpg';
 
-var focalLength = 10; // Starting focal length in mm
-var minFocalLength = 10; // Wide angle limit
-var maxFocalLength = 35; // Zoom-in limit
-var pinchDistanceStart = 0, pinchDistanceEnd = 0;
+// 🔧 Focal presets (mm)
+const MOBILE_FOCAL   = 18;       // starting focal on mobile (wider)
+const DESKTOP_FOCAL  = 18;       // starting focal on desktop (tighter)
+const MOBILE_MIN     = 10, MOBILE_MAX   = 30;
+const DESKTOP_MIN    = 10, DESKTOP_MAX  = 30;
+
+let camera, scene, renderer;
+let isUserInteracting = false;
+let isPinching = false;
+let lon = 0, lat = 0, phi = 0, theta = 0;
+
+// Focal state (set by applyDeviceCameraPreset)
+let focalLength;              // current focal in mm
+let minFocalLength;           // clamps
+let maxFocalLength;
+let pinchDistanceStart = 0, pinchDistanceEnd = 0;
+let wasMobile = null;         // last known device class
 
 init();
 animate();
@@ -18,75 +32,110 @@ function wW() { return window.innerWidth; }
 function wH() { return window.innerHeight; }
 function isMobile() { return wW() <= MOBILE_BP; }
 
-function init() {
-  var container = document.getElementById("studio");
-  var cover = document.getElementById("cover");
-  cover.style.opacity = 1;
+function applyDeviceCameraPreset() {
+  const mobile = isMobile();
 
-  camera = new THREE.PerspectiveCamera(70, wW() / wH(), 1, 2000);
-  camera.target = new THREE.Vector3(0, 0, 0);
+  // On first run, set a base focal. Afterwards, keep current but re-clamp.
+  if (wasMobile === null) {
+    focalLength = mobile ? MOBILE_FOCAL : DESKTOP_FOCAL;
+  }
+
+  minFocalLength = mobile ? MOBILE_MIN : DESKTOP_MIN;
+  maxFocalLength = mobile ? MOBILE_MAX : DESKTOP_MAX;
+
+  focalLength = clampFocal(focalLength);
   camera.setFocalLength(focalLength);
   camera.updateProjectionMatrix();
 
-  scene = new THREE.Scene();
+  wasMobile = mobile;
+}
 
-  // Slightly fewer segments on mobile for perf
-  var segW = isMobile() ? 40 : 60;
-  var segH = isMobile() ? 28 : 40;
-  var geometry = new THREE.SphereGeometry(500, segW, segH);
-  geometry.scale(-1, 1, 1);
+function init() {
+  const container = document.getElementById('studio');
+  const cover = document.getElementById('cover');
+  if (cover) cover.style.opacity = 1;
 
-  // ✅ Use small JPG on mobile, full JPG on desktop
-  const texFile = isMobile()
-    ? '250107_180.jpg'
-    : '250506_ms_studio_360_20-150.jpg';
-  const texPath = (import.meta.env.BASE_URL || '/') + texFile;
+  // CAMERA
+  camera = new THREE.PerspectiveCamera(70, wW() / wH(), 1, 2000);
+  camera.target = new THREE.Vector3(0, 0, 0);
 
-  const texture = new THREE.TextureLoader().load(texPath);
-  texture.encoding = THREE.sRGBEncoding;
-
-  const material = new THREE.MeshBasicMaterial({ map: texture });
-  var mesh = new THREE.Mesh(geometry, material);
-  scene.add(mesh);
-
-  renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
-  renderer.setPixelRatio(isMobile() ? 1 : Math.min(2, window.devicePixelRatio));
+  // RENDERER (crisper on HiDPI, but keep mobile reasonable)
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  const dpr = isMobile()
+    ? Math.min(2, window.devicePixelRatio)
+    : Math.max(1, Math.min(3, window.devicePixelRatio));
+  renderer.setPixelRatio(dpr);
   renderer.setSize(wW(), wH());
+  if ('outputColorSpace' in renderer) {
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+  } else {
+    renderer.outputEncoding = THREE.sRGBEncoding;
+  }
   container.appendChild(renderer.domElement);
 
-  cover.addEventListener("mousedown", onMouseDown, false);
-  cover.addEventListener("mousemove", onMouseMove, false);
-  cover.addEventListener("mouseup", onMouseUp, false);
-  cover.addEventListener("wheel", onMouseWheel, { passive: false });
+  // SCENE + GEOMETRY
+  scene = new THREE.Scene();
+  const segW = isMobile() ? 60 : 80;
+  const segH = isMobile() ? 40 : 60;
+  const geometry = new THREE.SphereGeometry(500, segW, segH);
+  geometry.scale(-1, 1, 1);
 
-  cover.addEventListener("touchstart", onTouchStart, false);
-  cover.addEventListener("touchmove", onTouchMove, false);
-  cover.addEventListener("touchend", onTouchEnd, false);
+  // TEXTURE
+  const texFile = (import.meta.env.BASE_URL || '/') + (isMobile() ? TEX_MOBILE : TEX_DESKTOP);
+  const texture = new THREE.TextureLoader().load(texFile);
+  if ('colorSpace' in texture) texture.colorSpace = THREE.SRGBColorSpace;
+  else texture.encoding = THREE.SRGBEncoding;
+  texture.generateMipmaps = true;
+  texture.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
 
-  window.addEventListener("resize", onWindowResize, false);
+  const material = new THREE.MeshBasicMaterial({ map: texture });
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+
+  // 🔑 Apply device preset AFTER camera exists
+  applyDeviceCameraPreset();
+
+  // EVENTS (no blend-mode toggling)
+  const target = cover || container;
+  target.addEventListener('mousedown', onMouseDown, false);
+  target.addEventListener('mousemove', onMouseMove, false);
+  target.addEventListener('mouseup', onMouseUp, false);
+  target.addEventListener('wheel', onMouseWheel, { passive: false });
+
+  target.addEventListener('touchstart', onTouchStart, false);
+  target.addEventListener('touchmove', onTouchMove, false);
+  target.addEventListener('touchend', onTouchEnd, false);
+
+  window.addEventListener('resize', onWindowResize, false);
 }
 
 function onWindowResize() {
   camera.aspect = wW() / wH();
   camera.updateProjectionMatrix();
-  renderer.setPixelRatio(isMobile() ? 1 : Math.min(2, window.devicePixelRatio));
+
+  const mobile = isMobile();
+  if (mobile !== wasMobile) {
+    applyDeviceCameraPreset();     // switch preset when crossing breakpoint
+  } else {
+    focalLength = clampFocal(focalLength); // keep but enforce clamps
+    camera.setFocalLength(focalLength);
+    camera.updateProjectionMatrix();
+  }
+
+  const dpr = mobile
+    ? Math.min(2, window.devicePixelRatio)
+    : Math.max(1, Math.min(3, window.devicePixelRatio));
+  renderer.setPixelRatio(dpr);
   renderer.setSize(wW(), wH());
 }
 
-var onPointerDownPointerX, onPointerDownPointerY, onPointerDownLon, onPointerDownLat;
-
-var header = document.getElementById('idheader');
-var footer = document.getElementById('idfooter');
-var headings = document.querySelectorAll('h3');
+let onPointerDownPointerX, onPointerDownPointerY, onPointerDownLon, onPointerDownLat;
 
 function onMouseDown(e) {
-  headings.forEach(function(heading) { heading.style.color = 'white'; });
-  if (header) header.style.mixBlendMode = 'difference';
-  if (footer) footer.style.mixBlendMode = 'difference';
   e.preventDefault();
-
   isUserInteracting = true;
-  document.getElementById("cover").style.opacity = 0;
+  const cover = document.getElementById('cover');
+  if (cover) cover.style.opacity = 0;
 
   onPointerDownPointerX = e.clientX;
   onPointerDownPointerY = e.clientY;
@@ -106,7 +155,8 @@ function onMouseUp() {
   isUserInteracting = false;
   setTimeout(() => {
     if (!isUserInteracting) {
-      document.getElementById("cover").style.opacity = 1;
+      const cover = document.getElementById('cover');
+      if (cover) cover.style.opacity = 1;
     }
   }, 500);
 }
@@ -115,11 +165,11 @@ function clampFocal(f) {
   return Math.max(minFocalLength, Math.min(maxFocalLength, f));
 }
 
+// Inverted wheel zoom: up = zoom in, down = zoom out
 function onMouseWheel(e) {
   e.preventDefault();
   const zoomSpeed = 0.5;
-  // Wheel up (deltaY < 0) => zoom in; down => zoom out
-  focalLength -= e.deltaY * zoomSpeed * 0.01; // inverted
+  focalLength -= e.deltaY * zoomSpeed * 0.01;
   focalLength = clampFocal(focalLength);
   camera.setFocalLength(focalLength);
   camera.updateProjectionMatrix();
@@ -142,7 +192,7 @@ function onTouchMove(e) {
   if (isPinching && e.touches.length === 2) {
     e.preventDefault();
     pinchDistanceEnd = getPinchDistance(e.touches);
-    var delta = pinchDistanceEnd - pinchDistanceStart;
+    const delta = pinchDistanceEnd - pinchDistanceStart;
 
     // Pinch out = zoom in
     focalLength += delta * 0.05;
@@ -168,8 +218,8 @@ function onTouchEnd(e) {
 }
 
 function getPinchDistance(touches) {
-  var dx = touches[0].clientX - touches[1].clientX;
-  var dy = touches[0].clientY - touches[1].clientY;
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
   return Math.sqrt(dx * dx + dy * dy);
 }
 

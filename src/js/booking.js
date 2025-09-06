@@ -1,22 +1,20 @@
+// booking.js
 import myHelpers from './helper.js';
 const base = import.meta.env.BASE_URL;
 
-// Config: toast durations
+// Toast durations
 const TOAST_SUCCESS_MS = 7000; // success toast duration (ms)
 const TOAST_ERROR_MS   = 0;    // server error toast; 0 = don't auto-hide
 
-// ✅ Ping Render backend early
+// Wake backend
 fetch('https://mariastudio-backend.onrender.com/ping')
   .then(() => console.log("🟢 Render server pinged"))
   .catch(() => console.warn("⚠️ Could not ping backend"));
 
 /* ---------------------------
    Toast (loading/success/error)
-   - Moves toast to <body> so it isn't hidden by header/modal z-index
-   - Positions it just under the header on any breakpoint
 --------------------------- */
 function ensureToast() {
-  // If there's no toast, create one. If it exists inside the modal, move it to <body>.
   let toast = document.getElementById('form-toast');
   if (!toast) {
     toast = document.createElement('div');
@@ -32,7 +30,6 @@ function ensureToast() {
   } else if (toast.parentElement !== document.body) {
     document.body.appendChild(toast);
   }
-  // Make sure it sits above everything
   toast.style.zIndex = '2000';
   return toast;
 }
@@ -42,7 +39,7 @@ function positionToast() {
   const header = document.getElementById('idheader');
   if (!toast || !header) return;
   const headerHeight = Math.ceil(header.getBoundingClientRect().height);
-  toast.style.top = `${headerHeight + 8}px`; // always just below header
+  toast.style.top = `${headerHeight + 8}px`;
   toast.style.left = '50%';
   toast.style.transform = toast.classList.contains('toast--show')
     ? 'translate(-50%, 0)'
@@ -54,7 +51,6 @@ function showToast(type, message, durationMs) {
   const text = document.getElementById('toast-text');
   const spinner = toast.querySelector('.toast__spinner');
 
-  // 🔑 cancel any pending hide timeouts (both auto-hide and finalize)
   if (toast._finalizeTimer) { clearTimeout(toast._finalizeTimer); toast._finalizeTimer = null; }
   if (toast._hideTimer)     { clearTimeout(toast._hideTimer);     toast._hideTimer     = null; }
 
@@ -65,7 +61,6 @@ function showToast(type, message, durationMs) {
   positionToast();
   requestAnimationFrame(() => toast.classList.add('toast--show'));
 
-  // schedule auto-hide only if a duration is provided
   if (durationMs && durationMs > 0) {
     toast._hideTimer = setTimeout(hideToast, durationMs);
   }
@@ -76,19 +71,15 @@ function hideToast() {
   if (!toast || toast.hidden) return;
 
   toast.classList.remove('toast--show');
-
-  // clear any pending timers
   if (toast._hideTimer) { clearTimeout(toast._hideTimer); toast._hideTimer = null; }
   if (toast._finalizeTimer) { clearTimeout(toast._finalizeTimer); toast._finalizeTimer = null; }
 
-  // schedule the final “hidden = true” after the CSS fade (~200ms)
   toast._finalizeTimer = setTimeout(() => {
     toast.hidden = true;
     toast._finalizeTimer = null;
   }, 200);
 }
 
-// Keep toast positioned correctly on open/resize
 window.addEventListener('resize', positionToast);
 document.addEventListener('modalOpened', positionToast);
 
@@ -96,7 +87,7 @@ document.addEventListener('modalOpened', positionToast);
    Modal open bootstrap
 --------------------------- */
 document.addEventListener('modalOpened', () => {
-
+  // If booking form isn’t on page, bail out (prevents null errors on other pages)
   if (!document.getElementById('main-book-01')) return;
 
   // Phone input (intl-tel-input)
@@ -118,7 +109,7 @@ document.addEventListener('modalOpened', () => {
 
   // Radios + dynamic fields
   const yesRadio = document.getElementById('firsttime-yes');
-  const noRadio = document.getElementById('firsttime-no');
+  const noRadio  = document.getElementById('firsttime-no');
   if (yesRadio) yesRadio.addEventListener('click', toggleFirstTimeBooking);
   if (noRadio)  noRadio.addEventListener('click', toggleFirstTimeBooking);
 
@@ -145,9 +136,9 @@ document.addEventListener('modalOpened', () => {
 --------------------------- */
 function toggleFirstTimeBooking() {
   const yesRadio = document.getElementById('firsttime-yes');
-  const noRadio = document.getElementById('firsttime-no');
+  const noRadio  = document.getElementById('firsttime-no');
   const imgYes = document.getElementById('img-yes');
-  const imgNo = document.getElementById('img-no');
+  const imgNo  = document.getElementById('img-no');
   const youAreaContainer = document.getElementById('youarea-container');
   const billingDetailsContainer = document.getElementById('billing-details-container');
   const billingDetailsSame = document.getElementById('billingdetails-same');
@@ -174,32 +165,16 @@ function toggleInputsBasedOnProjectType() {
   const tellUsMoreContainer   = document.getElementById('tellusmore-container');
 
   // Photographer for all except Ecommerce
-  if (projectType === 'Ecommerce') {
-    photographerContainer.classList.add('hidden');
-  } else {
-    photographerContainer.classList.remove('hidden');
-  }
+  photographerContainer.classList.toggle('hidden', projectType === 'Ecommerce');
 
   // Brand for Campaign/Lookbook/Ecommerce
-  if (['Campaign','Lookbook','Ecommerce'].includes(projectType)) {
-    brandNameContainer.classList.remove('hidden');
-  } else {
-    brandNameContainer.classList.add('hidden');
-  }
+  brandNameContainer.classList.toggle('hidden', !['Campaign','Lookbook','Ecommerce'].includes(projectType));
 
   // Magazine for Editorial
-  if (projectType === 'Editorial') {
-    magazineNameContainer.classList.remove('hidden');
-  } else {
-    magazineNameContainer.classList.add('hidden');
-  }
+  magazineNameContainer.classList.toggle('hidden', projectType !== 'Editorial');
 
   // Tell us more for Personal/Other
-  if (['Personal','Other'].includes(projectType)) {
-    tellUsMoreContainer.classList.remove('hidden');
-  } else {
-    tellUsMoreContainer.classList.add('hidden');
-  }
+  tellUsMoreContainer.classList.toggle('hidden', !['Personal','Other'].includes(projectType));
 }
 
 function toggleEQListFields() {
@@ -243,7 +218,7 @@ function toggleBillingDetails() {
 --------------------------- */
 function initializeDatePickers() {
   const appointmentDates = document.getElementById('appointment-dates');
-   if (!appointmentDates) return;  // ← prevents the null .placeholder error
+  if (!appointmentDates) return;  // prevents null .placeholder error
 
   const today = new Date();
   const yyyy = today.getFullYear();
@@ -263,16 +238,15 @@ function initializeDatePickers() {
    Booking form wiring
 --------------------------- */
 function initializeBookingForm() {
-
   // If booking form isn’t on the page, bail out
   if (!document.getElementById('form-part-01')) return;
 
   initializeDatePickers();
 
-  const nextBtn1 = document.getElementById('nextBtn1');
-  const nextBtn2 = document.getElementById('nextBtn2');
-  const backBtn2 = document.getElementById('backBtn2');
-  const backBtn3 = document.getElementById('backBtn3');
+  const nextBtn1  = document.getElementById('nextBtn1');
+  const nextBtn2  = document.getElementById('nextBtn2');
+  const backBtn2  = document.getElementById('backBtn2');
+  const backBtn3  = document.getElementById('backBtn3');
   const submitBtn = document.querySelector('#form-part-03 button[type="submit"]');
 
   if (nextBtn1) { nextBtn1.removeEventListener('click', handleNextBtn1); nextBtn1.addEventListener('click', handleNextBtn1); }
@@ -282,7 +256,7 @@ function initializeBookingForm() {
   if (submitBtn){ submitBtn.removeEventListener('click', handleFormSubmit); submitBtn.addEventListener('click', handleFormSubmit); }
 }
 
-// No scroll-to-error: just highlight via CSS .error
+// No error toasts; just inline highlights
 function handleNextBtn1() {
   const formPart1 = document.getElementById('form-part-01');
   if (validateForm(formPart1)) {
@@ -303,8 +277,6 @@ function handleBackBtn3() { showPreviousPart(3); }
 
 function handleFormSubmit(event) {
   event.preventDefault();
-
-
   const submitBtn = event.currentTarget;
   if (submitBtn) submitBtn.disabled = true;
 
@@ -385,56 +357,51 @@ function validateForm(form) {
 }
 
 /* ---------------------------
-   Submission
+   Submission (multipart/form-data)
 --------------------------- */
 function logFormData(submitBtn) {
-  const formData1 = new FormData(document.getElementById('form-part-01'));
-  const formData2 = new FormData(document.getElementById('form-part-02'));
-  const formData3 = new FormData(document.getElementById('form-part-03'));
+  const fd = new FormData();
 
-  const combinedData = {
-    ...Object.fromEntries(formData1),
-    ...Object.fromEntries(formData2),
-    ...Object.fromEntries(formData3),
-    date: new Date().toISOString()
-  };
+  // Merge fields from all 3 forms
+  ['form-part-01', 'form-part-02', 'form-part-03'].forEach(id => {
+    const formEl = document.getElementById(id);
+    if (!formEl) return;
+    const f = new FormData(formEl);
+    for (const [k, v] of f.entries()) {
+      // (If the same key appears twice across forms, both will be appended;
+      // your names are distinct so this is fine.)
+      fd.append(k, v ?? '');
+    }
+  });
 
-  if (!combinedData.contact_firsttime || combinedData.contact_firsttime === 'no') {
-    combinedData.youarea = '';
-  }
+  // Extra client timestamp (server also stamps its own)
+  fd.append('client_date', new Date().toISOString());
 
-  const fileInput = document.querySelector('input[type="file"]');
-  const file = fileInput?.files[0];
+  // NOTE: The file input with name="general_eqlistfile" (id="eqlistfile")
+  // is already included by the FormData(form) above. No need to add again.
 
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      combinedData.file_name = file.name;
-      combinedData.file_content = e.target.result;
-      sendFormDataToServer(combinedData, submitBtn);
-    };
-    reader.readAsDataURL(file);
-  } else {
-    sendFormDataToServer(combinedData, submitBtn);
-  }
+  sendFormDataToServer(fd, submitBtn);
 }
 
-function sendFormDataToServer(data, submitBtn) {
+function sendFormDataToServer(formData, submitBtn) {
   fetch('https://mariastudio-backend.onrender.com/submit-booking', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
+    // Do NOT set Content-Type header; the browser sets the right multipart boundary
+    body: formData
   })
-    .then(res => {
-      if (!res.ok) throw new Error("Failed to submit booking");
-      return res.json();
-    })
-   .then(response => {
-      console.log('Booking submitted successfully:', response);
-      showToast('success', 'Thank you! Your booking was submitted.', TOAST_SUCCESS_MS);
-      if (submitBtn) submitBtn.disabled = false;
-    })
-    .catch(err => {
+  .then(async res => {
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      throw new Error(`HTTP ${res.status} ${res.statusText} – ${body}`);
+    }
+    return res.json();
+  })
+  .then(response => {
+    console.log('Booking submitted successfully:', response);
+    showToast('success', 'Thank you! Your booking was submitted.', TOAST_SUCCESS_MS);
+    if (submitBtn) submitBtn.disabled = false;
+  })
+  .catch(err => {
     console.error('Error submitting booking:', err);
     showToast('error', 'Something went wrong. Please try again.', TOAST_ERROR_MS);
     if (submitBtn) submitBtn.disabled = false;
@@ -446,13 +413,10 @@ function sendFormDataToServer(data, submitBtn) {
 --------------------------- */
 function enableSwiping() {
   const mainBookElements = document.querySelectorAll('[id^="main-book-"]');
-  
   mainBookElements.forEach((element) => {
     const partNumber = parseInt(element.id.split('-')[2], 10);
-    
-    let startX = 0;
-    let startY = 0;
-    
+    let startX = 0, startY = 0;
+
     element.addEventListener('touchstart', (e) => {
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
@@ -465,12 +429,8 @@ function enableSwiping() {
       const deltaY = endY - startY;
 
       if (Math.abs(deltaY) > 50) return;
-
-      if (deltaX < -50) {
-        showNextPart(partNumber);
-      } else if (deltaX > 50) {
-        showPreviousPart(partNumber);
-      }
+      if (deltaX < -50)      showNextPart(partNumber);
+      else if (deltaX > 50)  showPreviousPart(partNumber);
     });
   });
 }
