@@ -13,7 +13,7 @@ export const translations = {
     _main03_2_Electricity_list: `- High voltage, up to 96 kW<br>- High-speed Wi-Fi: 500 Mbps`,
     _main03_3_Elevators: "Elevators",
     _main03_3_Elevators_list: `- Elevator 1: H 2.1 m × W 1.8 m ×&nbsp;L&nbsp;2.55&nbsp;m<br>- Elevator 2: H 2.4 m × W 1.87 m ×&nbsp;L&nbsp;2.8&nbsp;m`,  
-    _main04_1_address: `Maria Studio<br>100 ave. du Général Leclerc<br>93500 Pantin [FR]<br>2nd floor, Unit 215`,
+    _main04_1_address: `Maria Studio<br>100 Av. du Général Leclerc<br>93500 Pantin [FR]<br>2nd floor, Unit 215`,
     _main04_4_arrival: `Subway 5 - Hoche<br>RER E - Pantin<br>Tramway 3B - Delphine Seyrig` 
   },
   fr: {
@@ -30,7 +30,7 @@ export const translations = {
     _main03_2_Electricity_list: `- Haute tension, jusqu'à 96 kW<br>- Wi-Fi haut débit : 500 Mbps`,
     _main03_3_Elevators: "Ascenseurs",
     _main03_3_Elevators_list: `- Ascenseur 1 : H 2.1 m × L 1.8 m ×&nbsp;L&nbsp;2.55&nbsp;m<br>- Ascenseur 2 : H 2.4 m × L 1.87 m ×&nbsp;L&nbsp;2.8&nbsp;m`,  
-    _main04_1_address: `Maria Studio<br>100 ave. du Général Leclerc<br>93500 Pantin [FR]<br>2ème étage, Unité 215`,
+    _main04_1_address: `Maria Studio<br>100 Av. du Général Leclerc<br>93500 Pantin [FR]<br>2ème étage, Unité 215`,
     _main04_4_arrival: `Métro 5 - Hoche<br>RER E - Pantin<br>Tramway 3B - Delphine Seyrig` 
   }
 };
