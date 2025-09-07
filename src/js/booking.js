@@ -7,7 +7,7 @@ const TOAST_SUCCESS_MS = 7000; // success toast duration (ms)
 const TOAST_ERROR_MS   = 0;    // server error toast; 0 = don't auto-hide
 
 // Wake backend
-fetch('https://mariastudio-backend.onrender.com/ping')
+fetch('https://mariastudio-backend-18ds.onrender.com/ping')
   .then(() => console.log("🟢 Render server pinged"))
   .catch(() => console.warn("⚠️ Could not ping backend"));
 
@@ -384,7 +384,7 @@ function logFormData(submitBtn) {
 }
 
 function sendFormDataToServer(formData, submitBtn) {
-  fetch('https://mariastudio-backend.onrender.com/submit-booking', {
+  fetch('https://mariastudio-backend-18ds.onrender.com/submit-booking', {
     method: 'POST',
     // Do NOT set Content-Type header; the browser sets the right multipart boundary
     body: formData
