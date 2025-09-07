@@ -8,9 +8,9 @@ const TEX_DESKTOP = '250506_ms_studio_360_20-150_15000-7500.jpg';
 const TEX_MOBILE  = '250506_ms_studio_360_20-150_9900-4950.jpg';
 
 // 🔧 Focal presets (mm)
-const MOBILE_FOCAL   = 18;       // starting focal on mobile (wider)
-const DESKTOP_FOCAL  = 18;       // starting focal on desktop (tighter)
-const MOBILE_MIN     = 10, MOBILE_MAX   = 30;
+const MOBILE_FOCAL   = 14;       // starting focal on mobile (wider)
+const DESKTOP_FOCAL  = 10;       // starting focal on desktop (tighter)
+const MOBILE_MIN     = 14, MOBILE_MAX   = 30;
 const DESKTOP_MIN    = 10, DESKTOP_MAX  = 30;
 
 let camera, scene, renderer;
