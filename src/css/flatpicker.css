@@ -34,11 +34,12 @@
   .flatpickr-weekdays {
     font-size: 12px;
     text-decoration: uppercase; 
-    background-color: #000000; /* Background color of weekdays row */
-    color: #333; /* Text color */
+    background-color: #ffffff; /* Background color of weekdays row */
+    color: #000000; /* Text color */
     padding: 5px 0;
     border-top: 1px solid rgb(230, 230, 230);
     border-bottom: 1px solid rgb(230, 230, 230);
+    font-weight: normal;
   }
   
   /* Customize individual day cells */
