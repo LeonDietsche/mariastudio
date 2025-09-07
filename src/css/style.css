@@ -324,7 +324,7 @@ a:hover {
 }
 
 a#pdf:hover {
-  cursor: grab !important;
+  cursor: pointer !important;
   cursor: -webkit-grab !important; /* Safari Fallback */
 }
 a#pdf:active {
