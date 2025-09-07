@@ -22,7 +22,7 @@
   }
 
   .flatpickr-monthDropdown-months select {
-    color: black !important;
+    color: #000000 !important;
   }
   
   .flatpickr-prev-month:hover,
@@ -32,14 +32,14 @@
   
   /* Customize the weekdays (e.g., Mon, Tue) */
   .flatpickr-weekdays {
-    font-size: 12px;
+    font-size: 10px;
     text-decoration: uppercase; 
     background-color: #ffffff; /* Background color of weekdays row */
     color: #000000; /* Text color */
     padding: 5px 0;
     border-top: 1px solid rgb(230, 230, 230);
     border-bottom: 1px solid rgb(230, 230, 230);
-    font-weight: normal;
+    font-weight: normal !important;
   }
   
   /* Customize individual day cells */
