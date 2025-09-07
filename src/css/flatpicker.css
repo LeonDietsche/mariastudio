@@ -32,16 +32,21 @@
   
   /* Customize the weekdays (e.g., Mon, Tue) */
   .flatpickr-weekdays {
-    font-size: 10px;
     text-decoration: uppercase; 
     background-color: #ffffff; /* Background color of weekdays row */
     color: #000000; /* Text color */
     padding: 5px 0;
     border-top: 1px solid rgb(230, 230, 230);
     border-bottom: 1px solid rgb(230, 230, 230);
-    font-weight: normal !important;
   }
   
+  /* Weekday labels (Mon, Tue, …) */
+  .flatpickr-weekday {
+    font-size: 10px;
+    font-weight: normal !important;
+    color: #000000;
+  }
+
   /* Customize individual day cells */
   .flatpickr-day {
     font-size: 12px;
