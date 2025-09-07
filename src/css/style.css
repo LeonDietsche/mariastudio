@@ -323,13 +323,8 @@ a:hover {
   text-underline-offset: 2.6px;
 }
 
-a#pdf:hover {
+a#pdf:hover, a#pdf:active {
   cursor: pointer !important;
-  cursor: -webkit-grab !important; /* Safari Fallback */
-}
-a#pdf:active {
-  cursor: pointer !important;
-  cursor: -webkit-grabbing !important;
 }
 
 main > div{
