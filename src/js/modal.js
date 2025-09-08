@@ -26,6 +26,13 @@ newsletterToggleMobile.addEventListener('click', () => {
   newsletterFormMobile.classList.toggle('hidden');
 });
 
+/* ➜ NEU: Helper, um den mobilen Newsletter sicher zu schließen */
+function closeMobileNewsletter() {
+  if (newsletterFormMobile && !newsletterFormMobile.classList.contains('hidden')) {
+    newsletterFormMobile.classList.add('hidden');
+  }
+}
+
 // Close Modal on X
 const closeModalBtn = document.getElementById('closeModalBtn');
 closeModalBtn.addEventListener('click', () => toggleModal());
@@ -34,6 +41,22 @@ let currentContentUrl = null;
 
 // Mode tracking
 let currentMode = myHelpers.isMobile() ? 'mobile' : 'desktop';
+
+/* === A) NEU: Helper zum Setzen der Header-Hintergrundfarbe auf Mobile === */
+function updateHeaderBgForMobile() {
+  if (!header) return;
+
+  const isMobile = (currentMode === 'mobile');
+  const isOpen   = modal.style.display === 'block';
+
+  // Klassen sauber halten
+  header.classList.remove('header--transparent', 'header--white');
+
+  if (isMobile) {
+    // Mobile: Standard = transparent; Modal offen = weiß
+    header.classList.add(isOpen ? 'header--white' : 'header--transparent');
+  }
+}
 
 function hideHoverOverlays() {
   const imageContainer = document.getElementById('image-container');
@@ -69,6 +92,9 @@ function syncHeaderFooterForMode() {
 
   // ensure headings remain black (in case older code ever flipped them)
   document.querySelectorAll('h1,h2,h3').forEach(el => (el.style.color = '#000'));
+
+  /* === B) NEU: Header-Hintergrund nachführen === */
+  updateHeaderBgForMobile();
 }
 
 function applyMode() {
@@ -120,6 +146,9 @@ function toggleModal(forceOpen = false) {
   document.dispatchEvent(evt);
 
   syncHeaderFooterForMode();
+
+  /* === C) NEU: Sofort nach dem Öffnen/Schließen aktualisieren === */
+  updateHeaderBgForMobile();
 }
 
 // Load modal content
@@ -215,7 +244,7 @@ function initializeDesktopHoverEffect() {
     videoItem.addEventListener('mouseover', () => {
       const videoPath = base + 'videos/video-001_maria_studio.mp4';
       modal.style.opacity = 1;
-      videoContainer.innerHTML = `<video src="${videoPath}" autoplay loop></video>`;
+      videoContainer.innerHTML = `<video src="${videoPath}") autoplay loop></video>`;
       videoContainer.style.opacity = 1;
       videoContainer.style.display = 'block';
     });
@@ -266,8 +295,18 @@ document.addEventListener('click', (event) => {
   }
 });
 
-toggleInfoBtn.addEventListener('click', () => loadModalContent(base + 'modal-info.html'));
-toggleBookBtn.addEventListener('click', () => loadModalContent(base + 'modal-book.html'));
+/* ➜ NEU: Beim Wechsel der Menüpunkte mobilen Newsletter sicher schließen */
+toggleInfoBtn.addEventListener('click', () => { 
+  closeMobileNewsletter();                       // NEU
+  loadModalContent(base + 'modal-info.html'); 
+});
+toggleBookBtn.addEventListener('click', () => { 
+  closeMobileNewsletter();                       // NEU
+  loadModalContent(base + 'modal-book.html'); 
+});
+
+/* ➜ NEU: Auch wenn das Modal anders geöffnet wird, Newsletter schließen */
+document.addEventListener('modalOpened', closeMobileNewsletter);
 
 // Mobile carousel (unchanged)
 const images = [
@@ -328,3 +367,9 @@ function initializeCarousel() {
   document.addEventListener('modalOpened', startCarousel);
   document.addEventListener('modalClosed', stopCarousel);
 }
+
+/* === D) NEU: Initial beim Laden setzen === */
+document.addEventListener('DOMContentLoaded', () => {
+  applyMode();
+  updateHeaderBgForMobile();
+});

@@ -261,7 +261,7 @@ button:hover {
 }
 
 #main-01 p:hover {
-  cursor: t; 
+  cursor: text; 
 }
 
 .main-split-container {
@@ -314,7 +314,7 @@ button:hover {
 }
 
 a:hover {
-  cursor: text; 
+  cursor: pointer; 
 }
 
 #pdf { 
@@ -554,6 +554,11 @@ footer{
   border-radius: 0px;
   width: 100%;
 }
+
+#newsletterToggle, #newsletterToggleMobile {
+  cursor: pointer;
+}
+
 
 .newsletter-form-mobil button {
   color: black; /* or #000 or whatever color you prefer */
@@ -804,8 +809,16 @@ footer{
     margin-right: 2vw;
     margin-left: 2vw;
     width: calc(100% - 4vw); 
-    min-height: 3em;
+    min-height: 2.5em;
     padding-bottom: 0;
+  }
+
+  #idheader.header--transparent {
+    background: transparent;
+  }
+
+  #idheader.header--white {
+    background: #fff;
   }
 
   h1 {
