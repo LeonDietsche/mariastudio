@@ -42,7 +42,7 @@
   
   /* Weekday labels (Mon, Tue, …) */
   .flatpickr-weekday {
-    font-size: 10px;
+    font-size: 10px !important;
     font-weight: normal !important;
     color: #000000;
   }
