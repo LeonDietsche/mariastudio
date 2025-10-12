@@ -295,20 +295,92 @@ document.addEventListener('click', (event) => {
   }
 });
 
+/* === Mobile: Tap-Handling — im Modal (nicht interaktiv) ⇒ Home (pushState); außerhalb ⇒ schließen === */
+let tapStartX = 0, tapStartY = 0, tapStartTime = 0;
+
+function isQuickTap(startX, startY, endX, endY, startTime, endTime) {
+  const dx = Math.abs(endX - startX);
+  const dy = Math.abs(endY - startY);
+  const dt = endTime - startTime;
+  return dx < 10 && dy < 10 && dt < 300;
+}
+
+// ➜ erweitert: erkennt Carousel als interaktiv
+function isInteractiveTarget(target) {
+  const interactiveSelectors = [
+    'a', 'button', 'input', 'select', 'textarea', 'label',
+    '[role="button"]', '[data-interactive="true"]',
+    '#main-01-carousel', '#main-01-carousel *', '#carousel-image'
+  ];
+  return target.closest(interactiveSelectors.join(',')) !== null;
+}
+
+document.addEventListener('touchstart', (e) => {
+  if (!myHelpers.isMobile()) return;
+  if (modal.style.display !== 'block') return;
+
+  const t = e.changedTouches[0];
+  tapStartX = t.clientX;
+  tapStartY = t.clientY;
+  tapStartTime = performance.now();
+}, { passive: true });
+
+document.addEventListener('touchend', (e) => {
+  if (!myHelpers.isMobile()) return;
+  if (modal.style.display !== 'block') return;
+
+  // Mobile: Booking-Ausnahme bleibt
+  if (currentContentUrl && currentContentUrl.endsWith('modal-book.html')) return;
+
+  const t = e.changedTouches[0];
+  const endX = t.clientX;
+  const endY = t.clientY;
+  const endTime = performance.now();
+
+  if (!isQuickTap(tapStartX, tapStartY, endX, endY, tapStartTime, endTime)) return;
+
+  const target = e.target;
+
+  // NEU: wenn Tap im Carousel → abbrechen
+  if (target.closest('#main-01-carousel')) return;
+
+  if (isInteractiveTarget(target)) return;
+
+  const tappedInsideModal = modalBodyContainer && modalBodyContainer.contains(target);
+
+  if (tappedInsideModal) {
+    toggleModal();
+    history.pushState({}, '', base);
+    return;
+  }
+
+  const isOnHeader = header && header.contains(target);
+  const isOnFooter = footer && footer.contains(target);
+  const isOnInfoBtn = toggleInfoBtn && toggleInfoBtn.contains(target);
+  const langBtn = document.getElementById('toggleLanguageBtn');
+  const isOnLangBtn = langBtn && langBtn.contains(target);
+  const newsletterFormMobil = document.querySelector('.newsletter-form-mobil');
+  const isOnNewsletter = (newsletterFormMobil && newsletterFormMobil.contains(target)) ||
+                         (newsletterForm && newsletterForm.contains(target));
+
+  if (isOnHeader || isOnFooter || isOnInfoBtn || isOnLangBtn || isOnNewsletter) return;
+
+  toggleModal();
+}, { passive: true });
+
 /* ➜ NEU: Beim Wechsel der Menüpunkte mobilen Newsletter sicher schließen */
 toggleInfoBtn.addEventListener('click', () => { 
-  closeMobileNewsletter();                       // NEU
+  closeMobileNewsletter();                       
   loadModalContent(base + 'modal-info.html'); 
 });
 toggleBookBtn.addEventListener('click', () => { 
-  closeMobileNewsletter();                       // NEU
+  closeMobileNewsletter();                       
   loadModalContent(base + 'modal-book.html'); 
 });
 
-/* ➜ NEU: Auch wenn das Modal anders geöffnet wird, Newsletter schließen */
 document.addEventListener('modalOpened', closeMobileNewsletter);
 
-// Mobile carousel (unchanged)
+// Mobile carousel
 const images = [
   `${base}images/IMG-001_MARIA_STUDIO.jpg`,
   `${base}images/IMG-002_MARIA_STUDIO.jpg`,
@@ -355,6 +427,10 @@ function initializeCarousel() {
   const carousel = document.getElementById('main-01-carousel');
   const carouselImage = document.getElementById('carousel-image');
   if (carousel && carouselImage) {
+    // NEU: als interaktiv markieren
+    carousel.setAttribute('data-interactive', 'true');
+    carouselImage.setAttribute('data-interactive', 'true');
+
     carousel.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; });
     carousel.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; handleGesture(); });
     carouselImage.addEventListener('click', e => {

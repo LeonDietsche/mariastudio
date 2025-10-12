@@ -32,6 +32,7 @@ body, html {
   grid-template-columns: repeat(15, 1fr);
   column-gap: 1%;
   row-gap: 0%;
+  cursor: text;
 }
 
 header {
@@ -39,12 +40,15 @@ header {
   z-index: 1000;
   top: 0;
   left: 0;
-  height: 1em;
+  /* height: 1em; */
   margin-top: 1vh;
   margin-right: 1vw;
   margin-left: 1vw;
-  width: calc(100% - 2vw); 
+  width: calc(100% - 2vw);
+  /* Header ist Grid (über .grid), daher: */
+  align-items: center; /* vertikal mittig in der Grid-Zeile */
 }
+
 
 .header-01 {
   grid-column: 1 / 2;
@@ -105,6 +109,16 @@ h3 {
   padding-bottom: 0.2em; 
 }
 
+/* Nur im Header: Text, Linie & Icon inline zentriert */
+header h3 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;       /* Abstand zwischen Text und Separator/Icon */
+  line-height: 1;   /* keine zusätzliche Luft */
+  padding-bottom: 0;/* überschreibt globales 0.2em */
+}
+
+
 p {
   font-family: OCR-X;
   font-size: 12px;
@@ -156,6 +170,7 @@ button {
   padding-left: 0px;  
   margin-left: 0px;
 }
+
 
 input {
   padding: 0;
@@ -340,12 +355,15 @@ main > div{
 
 #toggleInfoPipe, #toggleBookPipe{
   display: none;
+  height: 1em;
+  vertical-align: middle;
+  border-left: 0.533px solid currentColor; /* wirklich 0.533px */
+  margin-left: 1em;
 }
 
 #closeModalBtn {
   display: none;  /* Hide by default */
   background: none;
-
 }
 
 /* Styles for the full-screen modal */
@@ -644,6 +662,26 @@ footer{
   vertical-align: -1px;
   animation: toast-spin 0.8s linear infinite;
 }
+
+/* Einheitliche Höhe/Ausrichtung für Inline-SVGs und das X-IMG */
+.header-button img,
+.header-button svg {
+  height: 1em;
+  width: auto;            /* SVG skaliert proportional */
+  vertical-align: middle; /* falls inline gerendert */
+}
+
+/* Deine Border-Linien, wenn sichtbar (du togglest display) */
+#toggleInfoPipe,
+#toggleBookPipe {
+  /* display wird von dir per JS gesteuert (an/aus) */
+  height: 1em;
+  vertical-align: middle;
+  border-left: 0.533px solid currentColor;
+  margin-left: 0.5em;     /* angenehmer Abstand zum Text */
+  margin-right: 0;        /* optional */
+}
+
 
 @keyframes toast-spin { to { transform: rotate(360deg); } }
 
