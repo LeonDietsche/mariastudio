@@ -3,3 +3,5 @@ node_modules/.cache/gh-pages/
 
 # Ignore build folder inside 'src'
 src/dist/
+/admin/
+/api/
