@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <link rel="stylesheet" href="/css/_reset.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/flatpicker.css">
+  <!-- <script type="module" src="./js/intl-tel-input-utils.js"></script> -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  
+  <!-- Include intl-tel-input CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.2.1/build/css/intlTelInput.css">
+  <!-- Include intl-tel-input JS -->
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.2.1/build/js/intlTelInput.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Maria Studio",
+    "image": "https://maria.studio/ms_logotype.png",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "100 Av. du Général Leclerc",
+      "addressLocality": "Pantin",
+      "postalCode": "93500",
+      "addressCountry": "FR"
+    },
+    "url": "https://maria.studio/",
+    "telephone": "+33 1 82 30 22 21"
+  }
+  </script>
+    <title>MARIA STUDIO – Book the Studio</title>
+  <meta name="description" content="Booking request form for MARIA STUDIO, a 2152 ft² photo & film studio just outside Paris.">
+  <meta name="robots" content="index,follow">
+  <link rel="icon" href="/ms_ligature.png">
+
+  <!-- IMPORTANT: main.js from root -->
+  <script type="module" src="/js/main.js"></script>
+</head>
+<body>
+  <header class="grid" id="idheader">
+    <div class="header-01">
+      <a class="header-button" id="toggleInfoBtn"  href="/info/">
+        <h3><span id="toggleInfoStudio">INFO</span> <span id="toggleInfoPipe"></span></h3>
+      </a>
+    </div>
+    <div class="header-02">
+      <a class="header-button" id="toggleBookBtn" href="/book/">
+        <h3><span>BOOK NOW</span> <span id="toggleBookPipe"></span></h3>
+      </a>
+    </div>
+    <div class="header-03">
+      <button class="header-button" id="closeModalBtn">
+          <svg xmlns="http://www.w3.org/2000/svg"
+              width="1em" height="1em"
+              viewBox="0 0 100 100"
+              style="vertical-align: middle;">
+            <line x1="10" y1="10" x2="90" y2="90"
+                  stroke="black"
+                  stroke-width="0.533"
+                  vector-effect="non-scaling-stroke"/>
+            <line x1="90" y1="10" x2="10" y2="90"
+                  stroke="black"
+                  stroke-width="0.533"
+                  vector-effect="non-scaling-stroke"/>
+          </svg>
+      </button>
+    </div>
+    <div class="header-04">
+      <button class="header-button" id="toggleLanguageBtn">
+        <h3>EN/FR</h3>
+      </button>
+    </div>
+  </header>
+  <main>
+    <div id="studio"></div>
+    <div id="cover">
+        <img src="/ms_logotype.png" alt="Logo">
+    </div>
+  </main>
+  <div id="myModal" class="modal">
+    <div id="modal-body-container" class="modal-body"></div>
+    <div class="preload">
+      <img src="/images/IMG-001_MARIA_STUDIO.jpg" alt="Preload 1">
+      <img src="/images/IMG-002_MARIA_STUDIO.jpg" alt="Preload 2">
+      <img src="/images/IMG-003_MARIA_STUDIO.jpg" alt="Preload 3">
+      <img src="/images/IMG-004_MARIA_STUDIO.jpg" alt="Preload 4">
+      <img src="/images/IMG-005_MARIA_STUDIO.jpg" alt="Preload 5">
+      <img src="/images/IMG-006_MARIA_STUDIO.jpg" alt="Preload 6">
+      <img src="/images/IMG-007_MARIA_STUDIO.jpg" alt="Preload 7">
+      <img src="/images/IMG-008_MARIA_STUDIO.jpg" alt="Preload 8">
+      <img src="/images/IMG-009_MARIA_STUDIO.jpg" alt="Preload 9">
+      <img src="/images/IMG-010_MARIA_STUDIO.jpg" alt="Preload 10">
+    </div>
+   <div class="grid modal-footer-placeholder">
+        <div class="footer-01">
+          <a id="termsLinkModal" href="/terms_conditions/ms_terms_and_conditions_en.pdf" target="_blank" rel="noopener">
+            <h3>Terms & Conditions</h3>
+          </a>
+        </div>
+        <div class="footer-02">
+          <h3>100 Av. du Général Leclerc, 93500 Pantin</h3>
+        </div>
+        <div class="footer-03">
+          <a href="https://www.instagram.com/maria.studio.paris/" target="_blank"><h3>Instagram</h3></a>
+        </div>
+        <div class="footer-04">
+          <div id="newsletterFormMobile" class="newsletter-form-mobil hidden">
+            <form id="newsletterFormMobileInner">
+              <h2 for="email-mobile">Newsletter Maria Studio</h2>
+              <input type="email"
+                      id="email-mobile"
+                      name="email"
+                      placeholder="Your email"
+                      required>
+              <button type="submit">Subscribe</button>
+            </form>
+          </div>
+          <h3 id="newsletterToggleMobile" data-interactive="true">Newsletter</h3>
+        </div>
+    </div>
+  </div>
+  <div class="grid" id="newsletter">
+    <div id="newsletterForm" class="newsletter-form hidden">
+       <form id="newsletterFormDesktopInner">
+        <h2 for="email-desktop">Newsletter Maria Studio</h2>
+        <input type="email"
+              id="email-desktop"
+              name="email"
+              placeholder="Your email"
+              required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </div>
+  <footer class="grid" id="idfooter">
+     <div class="footer-01">
+      <a id="termsLinkDesktop" href="/terms_conditions/ms_terms_and_conditions_en.pdf" target="_blank" rel="noopener">
+        <h3 class="footer-desktop">Terms & Conditions</h3>
+      </a>
+    </div>
+    <div class="footer-02"> 
+      <a href="https://maps.app.goo.gl/cAjyu3nNH7zQEWXo6" target="_blank" rel="noopener noreferrer"
+        class="footer-phone">100 Av. du Général Leclerc, 93500 Pantin
+      </a>
+      <a href="https://maps.app.goo.gl/cAjyu3nNH7zQEWXo6" target="_blank" rel="noopener noreferrer"
+       class="footer-desktop">100 Av. du Général Leclerc, 93500 Pantin
+      </a>
+    </div>
+    
+      <div class="footer-03">
+        <a href="https://www.instagram.com/maria.studio.paris/" target="_blank">
+          <h3 class="footer-desktop">Instagram</h3>
+        </a>
+      </div>
+      <div class="footer-04">
+        <h3 id="newsletterToggle" class="footer-desktop">Newsletter</h3>
+      </div>
+  </footer>
+</body>
+</html>

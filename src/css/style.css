@@ -1,0 +1,1068 @@
+@font-face {
+  font-family: OCR-X;
+  src: url(/fonts/OCR-X-Regular.woff)
+  format("woff"); 
+}
+
+@font-face {
+  font-family: OCR-X-Thin;
+  src: url(/fonts/OCR-X-Thin.woff)
+  format("woff"); 
+}
+
+@font-face {
+  font-family: OCR-X-Light;
+  src: url(/fonts/OCR-X-Light.woff)
+  format("woff"); 
+}
+
+body, html {
+  font-size: 12px;
+  font-family: OCR-X;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  cursor: default;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  column-gap: 1%;
+  row-gap: 0%;
+  cursor: text;
+}
+
+header {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  /* height: 1em; */
+  margin-top: 1vh;
+  margin-right: 1vw;
+  margin-left: 1vw;
+  width: calc(100% - 2vw);
+  /* Header ist Grid (über .grid), daher: */
+  align-items: center; /* vertikal mittig in der Grid-Zeile */
+}
+
+
+.header-01 {
+  grid-column: 1 / 2;
+}
+
+.header-02 {
+  grid-column: 2 / 3;
+}
+
+.header-03 {
+  grid-column: 14 / 15;
+  text-align: right;
+}
+
+.header-04 {
+  grid-column: 15;
+  text-align:right;
+}
+
+
+h1 {
+  color: black;
+  font-family: OCR-X;
+  font-size: 10px;
+  line-height:1.3em;
+  font-weight: normal;
+  text-transform:uppercase;
+  margin:0;
+  /* position:relative; */
+  /* left: -19px; */
+  padding-bottom: 0.2em; 
+}
+
+
+h2 {
+  color: black;
+  font-family: OCR-X;
+  font-size: 10px;
+  line-height:1.3em;
+  font-weight: normal;
+  text-transform:uppercase;
+  margin:0;
+  /* position:relative; */
+  /* left: -30px; */
+  padding-bottom: 0.2em; 
+}
+
+h3 {
+  color: black;
+  font-family: OCR-X;
+  font-size: 12px;
+  line-height:1.3em;
+  font-weight: normal;
+  text-transform:uppercase;
+  margin:0;
+  /* position:relative; */
+  /* left: -30px; */
+  padding-bottom: 0.2em; 
+}
+
+/* Nur im Header: Text, Linie & Icon inline zentriert */
+header h3 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;       /* Abstand zwischen Text und Separator/Icon */
+  line-height: 1;   /* keine zusätzliche Luft */
+  padding-bottom: 0;/* überschreibt globales 0.2em */
+}
+
+
+p {
+  font-family: OCR-X;
+  font-size: 12px;
+  line-height:1.3em;
+  text-transform:uppercase;
+  margin: 0px;
+}
+
+a {
+  color:rgb(0, 0, 0);
+  font-family: OCR-X;
+  font-size: 12px;
+  line-height:1.3em;
+  text-transform:uppercase;
+  text-decoration: none;
+  margin:0;
+  padding:0;
+}
+
+label, input, textarea, button, select {
+  font-family: OCR-X; /* Apply font to form elements */
+  font-weight: normal;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+textarea {
+  border: 0.533px solid #000;
+  border-radius: 0;
+  width: 100%;
+  height: 1.3em;
+}
+
+button {
+  background-color: rgb(230, 230, 230);
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-right: 6px;
+  padding-left: 6px;  
+  margin-left: -6px;
+  /* color: white; */
+  border: none;
+}
+
+.header-button {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-right: 0px;
+  padding-left: 0px;  
+  margin-left: 0px;
+}
+
+
+input {
+  padding: 0;
+  border: none;
+  border-bottom: 0.9px solid #000;
+  border-radius: 0;
+  outline: none;
+  width: 100%;
+}
+
+.input-no-underline {
+  border-bottom: 0;
+}
+
+/* Hide the default radio buttons */
+.radio-input {
+  display: none;
+}
+
+/* Style the images */
+.radio-img {
+  width: auto;
+  height: 10px;
+  margin-right: 10px;
+}
+
+.custom-radio {
+  display: flex;
+  gap: 20px;
+}
+
+.custom-radio label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.custom-radio input[type="radio"] {
+  margin-right: 5px;
+}
+
+/* Stack radio buttons and labels vertically */
+.custom-radio-billing {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  /* gap: 10px;  Space between each radio button/label pair */
+}
+
+/* Align radio button with the label text */
+.custom-radio-billing label {
+  display: flex;
+  align-items: center; /* Align text and radio button */
+  font-family: OCR-X; /* Existing font style */
+  font-weight: normal;
+  font-size: 8pt;
+  text-transform: uppercase;
+}
+
+/* Add space between the radio button and the label text */
+.custom-radio-billing input[type="radio"] {
+  margin-right: 5px;
+  width: 20px;
+}
+
+select option {
+  font-family: OCR-X-Light;
+  font-weight: normal;
+  background-color: white;
+  color: black;
+}
+
+.hidden {
+  display: none;
+}
+
+.error {
+  border-bottom: 1px solid red;
+}
+
+#studio {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-size: cover;
+  z-index: 0; /* Ensure container is behind the header */
+}
+
+main:hover {
+  cursor:grab;
+}
+
+label {
+  color: #000000;
+  font-family: OCR-X;
+  font-size: 12px;
+  line-height: 1.3em;
+  font-weight: normal;
+  text-transform:uppercase;
+}
+
+button:hover {
+  cursor: pointer; 
+}
+
+#main-01 p:hover {
+  cursor: text; 
+}
+
+.main-split-container {
+  display: flex;
+  justify-content: flex-start; /* Align items to the left */
+  width: 100%; /* Ensure it takes full width */
+  align-items: baseline; /* Align items on baseline */
+}
+
+.number-container-01-02 {
+  width: 15%; /* Fixed width for the number column */
+  text-align: right; /* Align numbers to the right */
+  margin-right: 7px; /* Space between number and heading */
+  display: flex; 
+  align-items: baseline; /* Align numbers with heading baseline */
+}
+
+.number-container-03 {
+  width: 11.25%; /* Fixed width for the number column */
+  text-align: right; /* Align numbers to the right */
+  margin-right: 7px; /* Space between number and heading */
+  display: flex; 
+  align-items: baseline; /* Align numbers with heading baseline */
+}
+
+.number-container-04 {
+  width: 11.25%; /* Fixed width for the number column */
+  text-align: right; /* Align numbers to the right */
+  margin-right: 7px; /* Space between number and heading */
+  display: flex; 
+  align-items: baseline; /* Align numbers with heading baseline */
+}
+
+.text-container-01-02{
+  width: 80%;
+}
+
+.text-container-03{
+  width: 85%;
+}
+
+.text-container-04{
+  width: 85%;
+}
+
+#number-digit-underline{
+  margin-left: auto; /* Pushes the element to the right within flex container */
+  font-size: 10px;
+  border-bottom: 0.533px solid #000;
+}
+
+a:hover {
+  cursor: pointer; 
+}
+
+#pdf { 
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.533px;
+  text-underline-offset: 2.6px;
+}
+
+a#pdf:hover, a#pdf:active {
+  cursor: pointer !important;
+}
+
+main > div{
+  position: absolute;
+}
+
+
+#toggleInfoBtn, #toggleLanguageBtn, #toggleBookBtn {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+#toggleInfoPipe, #toggleBookPipe{
+  display: none;
+  height: 1em;
+  vertical-align: middle;
+  border-left: 0.533px solid currentColor; /* wirklich 0.533px */
+  margin-left: 1em;
+}
+
+#closeModalBtn {
+  display: none;  /* Hide by default */
+  background: none;
+}
+
+/* Styles for the full-screen modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  width: 100%;
+  height: 100%;
+  background-color:white;
+  opacity: 90%;
+  overflow-x: hidden;
+}
+
+.modal-body {
+  margin-right: 1vw;
+  margin-left: 1vw;
+  margin-top:29vh;
+}
+
+#main-01 {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  z-index: 999;
+  grid-row:1;
+  grid-column: 2 / 5;
+}
+
+#backBtn2,
+#backBtn3 {
+  display: none;
+  margin-right: 16.5px;
+}
+
+#main-book-01 {
+  margin: 0;
+  grid-row:1;
+  grid-column: 2 / 5;
+}
+
+#main-01-carousel {
+  display: none;
+    /* smooth appearance when it becomes visible in mobile mode */
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+#main-02 {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  /* font-size: 13px; */
+  z-index: 997;
+  grid-row:1;
+  grid-column: 5 / 8;
+}
+
+#main-book-02 {
+  margin: 0;
+  grid-row:1;
+  grid-column: 5 / 8;
+}
+
+#main-03 {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  z-index: 997;
+  grid-row:1;
+  grid-column: 8 / 12;
+}
+
+#main-book-03 {
+  margin: 0;
+  grid-row:1;
+  grid-column: 8 / 12;
+}
+
+#main-04 {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  z-index: 997;
+  grid-row:1;
+  grid-column: 12  / 16;
+}
+
+#image-container {
+  display: none; /* Hide initially */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 0.3s ease; /* Smooth transition for opacity */
+  opacity: 0; /* Initially hidden */
+  z-index: 998; /* Ensure it is on top */
+}
+
+#image-container img {
+  width: auto;
+  height: 100%;
+}
+
+#video-container {
+  display: none; /* Hide initially */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden; /* Prevent scrollbars */
+  background-size: cover;
+  background-position: center;
+  opacity: 0; /* Initially hidden */
+  z-index: 998; /* Ensure it is above the image container */
+}
+
+#video-container video {
+  width: 100%; /* Fill the container */
+  height: 100%;
+  object-fit: cover;
+}
+
+
+.preload {
+  display: none; /* Hide preloaded images */
+}
+
+.modal-footer-placeholder{
+  opacity: 0;
+}
+
+.modal-footer-placeholder a {
+  text-decoration-line: none;
+}
+
+footer{
+  width: calc(100% - 2vw); /* Adjusts the width to account for both margins */
+  margin-right: 1vw;
+  margin-left: 1vw;
+  margin-bottom: 1vh;
+  position: fixed;
+  bottom: 0;
+  height: 1em;
+  z-index: 1000;
+}
+
+.footer-phone{
+  display: none;
+}
+
+.footer-desktop{
+  display: block;
+}
+
+.footer-01 {
+  z-index: 1000;
+  grid-column: 1/3;
+}
+
+.footer-02 {
+  z-index: 1000;
+  text-align:center;
+  grid-column: 6 / 11;
+}
+
+.footer-03 {
+  z-index: 1000;
+  grid-column: 14/15;
+}
+
+.footer-04 {
+  z-index: 1000;
+  grid-column: 15;
+  text-align: right;
+}
+
+.footer-05 {
+  margin-right: 1vw;
+  z-index: 1000;
+  grid-column: 14;
+}
+
+#newsletter{
+  z-index: 1000;
+  position: fixed;
+  bottom: 4.7em;
+  height: 3em;
+  width: calc(100% - 2vw); /* Adjusts the width to account for both margins */
+  margin-right: 1vw;
+  margin-left: 1vw;
+}
+
+/* Position the newsletter form in the bottom right corner */
+.newsletter-form {
+  grid-column: 14/16;
+  background-color: transparent;
+  color: white;
+  border-radius: 0px;
+  z-index: 1000; /* Ensure it appears above other content */
+}
+
+.newsletter-form-mobil {
+  background-color: transparent;
+  color: white;
+  border-radius: 0px;
+  width: 100%;
+}
+
+#newsletterToggle, #newsletterToggleMobile {
+  cursor: pointer;
+}
+
+
+.newsletter-form-mobil button {
+  color: black; /* or #000 or whatever color you prefer */
+}
+
+.newsletter-form-mobil input[type="email"] {
+  background-color: transparent;
+  border: none;
+  border-bottom: 0.533px solid #000;
+  border-radius: 0;
+  outline: none;
+  width: 100%;
+}
+
+/* Style the form elements */
+.newsletter-form input[type="email"] {
+  background-color: transparent;
+  border: none;
+  border-bottom: 0.533px solid #000;
+  border-radius: 0;
+  outline: none;
+  width: 100%;
+}
+
+.newsletter-form button {
+  margin-top: 1em;
+}
+
+.newsletter-form-mobil button {
+  margin-top: 1em;
+  margin-bottom: 0.8em;
+}
+
+
+#cover {
+  opacity: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease; /* Smooth transition for opacity */
+}
+
+#cover img {
+  width: 75%;
+  max-width: 800px;
+  margin: auto;
+  height: auto;
+}
+
+.form-part {
+  grid-column: span 3;
+  margin: 10px;
+}
+
+.toast {
+  position: fixed;
+  top: calc(1em + 8px);      /* sits just under the header */
+  left: 50%;
+  transform: translate(-50%, -12px);
+  background: #fff;
+  border: 0.533px solid #000;
+  padding: 6px 10px;
+  z-index: 1200;             /* above header (1000) & modal (999) */
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+  font-family: OCR-X;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.toast--show { opacity: 1; transform: translate(-50%, 0); }
+
+.toast__spinner {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 1px solid #000;
+  border-top-color: transparent;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: -1px;
+  animation: toast-spin 0.8s linear infinite;
+}
+
+/* Einheitliche Höhe/Ausrichtung für Inline-SVGs und das X-IMG */
+.header-button img,
+.header-button svg {
+  height: 1em;
+  width: auto;            /* SVG skaliert proportional */
+  vertical-align: middle; /* falls inline gerendert */
+}
+
+/* Deine Border-Linien, wenn sichtbar (du togglest display) */
+#toggleInfoPipe,
+#toggleBookPipe {
+  /* display wird von dir per JS gesteuert (an/aus) */
+  height: 1em;
+  vertical-align: middle;
+  border-left: 0.533px solid currentColor;
+  margin-left: 0.5em;     /* angenehmer Abstand zum Text */
+  margin-right: 0;        /* optional */
+}
+
+
+@keyframes toast-spin { to { transform: rotate(360deg); } }
+
+@media only screen and (max-width: 1600px) {
+
+  .modal-body {
+    margin-top: 29vh;
+  }
+  
+  h1 {
+    font-size: 9px;
+  }
+
+  h2 {
+    font-size: 9px;
+  }
+  
+  h3 {
+    font-size: 11px;
+  }
+  
+  p {
+    font-size: 11px;
+  }
+  
+  a {
+   font-size: 11px;
+  }
+
+  label, input, textarea, button, select {
+    font-size: 11px;  
+  }
+
+  .header-01 {
+    grid-column: 1 / 2;
+  }
+  
+  .header-02 {
+    grid-column: 2 / 4;
+  }
+
+  .header-03 {
+    grid-column: 14 / 15;
+  }
+
+  .header-04 {
+    grid-column: 15;
+  }
+  
+  .number-container-01-02 {
+    width: 11.25%; /* Fixed width for the number column */
+  }
+  
+  .number-container-03 {
+    width: 11.25%; /* Fixed width for the number column */
+  }
+
+  .number-container-04 {
+    width: 15%; /* Fixed width for the number column */
+  }
+
+  .text-container-01-02{
+    width: 85%;
+  }
+  
+  .text-container-03{
+    width: 85%;
+  }
+  
+  .text-container-04{
+    width: 80%;
+  }
+
+  #main-01 {
+    grid-row:1;
+    grid-column: 1 / 5;
+  }
+
+  #main-book-01 {
+    grid-row:1;
+    grid-column: 1 / 5;
+  }
+  
+  #main-02 {
+    grid-row:1;
+    grid-column: 5 / 9;
+  }
+  
+  #main-book-02 {
+    grid-row:1;
+    grid-column: 5 / 9;
+  }
+
+  #main-03 {
+    grid-row:1;
+    grid-column: 9 / 13;
+  }
+
+  #main-book-03 {
+    grid-row:1;
+    grid-column: 9 / 13;
+  }
+
+  #main-04 {
+    grid-row:1;
+    grid-column: 13 / 16;
+  }
+
+  #main-book-04 {
+    grid-row:1;
+    grid-column: 13 / 16;
+  }
+
+  .form-part {
+    grid-column: span 4;
+  }
+
+  .footer-01 {
+    grid-column: 1/4;
+  }
+  
+  .footer-02 {
+    text-align:center;
+    grid-column: 5 / 12;
+  }
+  
+  .footer-03 {
+    grid-column: 14/15;
+  }
+  
+  .footer-04 {
+    grid-column: 15;
+  }
+}
+
+
+
+@media only screen and (max-width: 1275px) {
+
+  body {
+    font-size: 13px;
+  }
+
+  .modal {
+    opacity: 100%;
+  }
+  
+  .modal-body {
+    margin-top: 2.6em;
+    margin-left: 2vw;
+    margin-right: 2vw;
+  }
+
+  .grid {
+    grid-template-columns: repeat(5, 1fr);
+    column-gap: 1%;
+    row-gap: 0%;
+  }
+
+  header{
+    padding-top: 0.5em;
+    margin-top: 0;
+    margin-right: 2vw;
+    margin-left: 2vw;
+    width: calc(100% - 4vw); 
+    min-height: 2.5em;
+    padding-bottom: 0;
+  }
+
+  #idheader.header--transparent {
+    background: transparent;
+  }
+
+  #idheader.header--white {
+    background: #fff;
+  }
+
+  h1 {
+    font-size: 11px;
+  }
+
+  h2 {
+    font-size: 11px;
+    line-height:1.3em;
+  }
+  
+  h3 {
+    font-size: 13px;
+    line-height: 1.3em;
+  }
+  
+  p {
+    font-size: 13px;
+    line-height:1.3em;
+  }
+  
+  a {
+    font-size: 10pt;
+    line-height:1.3em;
+  }
+
+  h3, label, input, textarea, button, select {
+    font-size: 10pt;
+  }
+
+  input {
+    width: 100%;
+  }
+  .header-01 {
+    grid-column:  1 / 2;
+  }
+  
+  .header-02 {
+    grid-column: 2 / 4;
+  }
+
+  .header-03 {
+    grid-column: 4 / 5;
+  }
+
+  .header-04 {
+    grid-column: 5 / 6;
+    }
+
+
+  #newsletter{
+    display: none;
+  }
+
+  #main-01 {
+    margin-top: 0.5em;
+    grid-row:1;
+    grid-column: 1 / 6;
+    display: none;
+  }
+
+  .back-btn {
+    grid-column: 1 /3;
+  }
+
+  #nextBtn2 {
+    grid-column: 3/6;
+  }
+
+  #main-book-01, #main-book-02, #main-book-03{
+    margin: 0;
+    margin-top: 0.5em;
+    grid-column: 1/6;
+    padding-bottom: 1em;
+  }
+
+  #main-01-carousel {
+    grid-row:1;
+    grid-column: 1/6;
+    padding-bottom: 1em;
+    display: block;
+  }
+
+  #carousel-image {
+    max-width: 100%;
+    height: auto;
+    text-align: center;
+  }
+
+  #image-counter {
+    font-family: OCR-X;
+    font-size: 10pt;
+    margin-top: 0;
+  }
+  
+  #main-02 {
+    grid-row:2;
+    grid-column: 1/6;
+    padding-bottom: 1em;
+  }
+  
+  #main-03 {
+    grid-row:3;
+    grid-column: 1/6;
+    padding-bottom: 1em;
+  }
+
+  #main-04 {
+    grid-row: 4;
+    grid-column: 1/6;
+    padding-bottom: 1em;
+  }
+  
+  .number-container-01-02 {
+    width: 8%; /* Fixed width for the number column */
+    margin-right: 4px; /* Space between number and heading */
+  }
+  
+  .number-container-03 {
+    width: 8%; /* Fixed width for the number column */
+    margin-right: 4px; /* Space between number and heading */
+  }
+
+  .number-container-04 {
+    width: 8%; /* Fixed width for the number column */
+    margin-right: 4px; /* Space between number and heading */
+  }
+  
+  .text-container-01-02{
+    width: 90%;
+  }
+  
+  .text-container-03-04{
+    width: 90%;
+  } 
+
+  /* Footer section styling */
+  .modal-footer-placeholder{
+    opacity: 1;
+    margin-right: 2vw;
+    margin-left: 2vw;
+    width: calc(100% - 4vw); 
+    bottom: 0;  
+  }
+  
+  .form-part {
+    grid-column: span 4;
+  }
+
+  footer {
+    margin-right: 2vw;
+    margin-left: 2vw;
+    width: calc(100% - 4vw); 
+    position: fixed;
+  }
+
+  .footer-phone{
+    display: block;
+  }
+  
+  .footer-desktop{
+    display: none;
+  }
+
+  footer > div > a > h3{
+    margin: 0px;
+  }
+
+  footer > div >  h3{
+    margin: 0px;
+  }
+
+  .modal-footer-placeholder > div > a > h3{
+    margin: 0px;
+  }
+
+  .modal-footer-placeholder > div >  h3{
+    margin: 0px;
+  }
+
+
+  .footer-01 {
+    z-index: 1000;
+    grid-row:2;
+    grid-column: 1/6;
+  }
+  
+  .footer-02 {
+    z-index: 1000;
+    grid-row:4;
+    grid-column: 1/6;
+    text-align:left
+  }
+
+  .footer-03 {
+    z-index: 1000;
+    grid-row:3;
+    grid-column: 1/6;
+    }
+
+  .footer-04 {
+    z-index: 1000;
+    grid-row:1;
+    grid-column: 1/6;
+    text-align:left
+  }
+
+   .toast { font-size: 10pt; }
+}

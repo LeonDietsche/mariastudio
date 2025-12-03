@@ -1,0 +1,93 @@
+
+/* Customize the Flatpickr calendar container */
+.flatpickr-calendar {
+    font-family: OCR-X;
+    text-transform:uppercase;
+  }
+  
+  /* Customize the header (month/year) */
+  .flatpickr-months {
+    font-size: 10px;
+    background-color: rgb(230, 230, 230);/* Header background color */
+    color: #000000 !important; /* Header text color */
+    border-bottom: 1px solid #000000; /* Bottom border */
+    padding: 0px;
+    border-radius: 10px 10px 0 0; /* Top corners rounded */
+  }
+  
+  /* Customize the navigation buttons (previous/next) */
+  .flatpickr-prev-month,
+  .flatpickr-next-month {
+    color: #000000; /* Arrow color */
+  }
+
+  .flatpickr-monthDropdown-months select {
+    color: #000000 !important;
+  }
+  
+  .flatpickr-prev-month:hover,
+  .flatpickr-next-month:hover {
+    color: #000000; /* Arrow color on hover */
+  }
+  
+  /* Customize the weekdays (e.g., Mon, Tue) */
+  .flatpickr-weekdays {
+    text-decoration: uppercase; 
+    background-color: #ffffff; /* Background color of weekdays row */
+    color: #000000; /* Text color */
+    padding: 5px 0;
+    border-top: 1px solid rgb(230, 230, 230);
+    border-bottom: 1px solid rgb(230, 230, 230);
+  }
+  
+  /* Weekday labels (Mon, Tue, …) */
+  .flatpickr-weekday {
+    font-size: 10px !important;
+    font-weight: normal !important;
+    color: #000000;
+  }
+
+  /* Customize individual day cells */
+  .flatpickr-day {
+    font-size: 12px;
+    color: #000000; /* Text color */
+    background-color: #fff; /* Background color of each day */
+    border-radius: 5px; /* Rounded corners for each day */
+    transition: background-color 0.3s;
+  }
+
+  .flatpickr-current-month .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month {
+    outline: none;
+    padding: 0;
+  }
+    
+  
+  /* Customize selected date */
+  .flatpickr-day.selected,
+  .flatpickr-day.selected:hover,
+  .flatpickr-day.startRange,
+  .flatpickr-day.endRange {
+    background-color: #000000 !important; /* Background color of selected date */
+    color: #fff !important; /* Text color of selected date */
+    border-radius: 50%; /* Circular shape for selected date */
+    border-color: #000 !important;
+  }
+  
+  /* Disabled dates */
+  .flatpickr-day.disabled,
+  .flatpickr-day.disabled:hover {
+    background-color: #e9ecef; /* Background color of disabled dates */
+    color: rgb(230, 230, 230); /* Text color of disabled dates */
+    cursor: not-allowed;
+  }
+  
+  /* Today’s date */
+  .flatpickr-day.today {
+    border: 1px solid #000000; /* Border for today's date */
+    color: #000000;
+  }
+  
+  .flatpickr-day.today:hover {
+    background-color: #ffffff;
+    color: #fff;
+  }
