@@ -1,5 +1,6 @@
 // booking.js
 import myHelpers from './helper.js';
+import { t } from './translation.js';
 const base = import.meta.env.BASE_URL;
 
 // Toast durations
@@ -19,7 +20,7 @@ function ensureToast() {
     toast.setAttribute('role', 'status');
     toast.innerHTML = `
       <span class="toast__spinner" aria-hidden="true"></span>
-      <span id="toast-text">Sending your booking…</span>
+      <span id="toast-text">${t('toast_loading')}</span>
     `;
     document.body.appendChild(toast);
   } else if (toast.parentElement !== document.body) {
@@ -103,8 +104,8 @@ document.addEventListener('modalOpened', () => {
   }
 
   // Radios + dynamic fields
-  const yesRadio = document.getElementById('firsttime-yes');
-  const noRadio  = document.getElementById('firsttime-no');
+  const yesRadio = document.getElementById('firsttime_yes');
+  const noRadio  = document.getElementById('firsttime_no');
   if (yesRadio) yesRadio.addEventListener('click', toggleFirstTimeBooking);
   if (noRadio)  noRadio.addEventListener('click', toggleFirstTimeBooking);
 
@@ -130,8 +131,8 @@ document.addEventListener('modalOpened', () => {
    UI Toggles
 --------------------------- */
 function toggleFirstTimeBooking() {
-  const yesRadio = document.getElementById('firsttime-yes');
-  const noRadio  = document.getElementById('firsttime-no');
+  const yesRadio = document.getElementById('firsttime_yes');
+  const noRadio  = document.getElementById('firsttime_no');
   const imgYes = document.getElementById('img-yes');
   const imgNo  = document.getElementById('img-no');
   const youAreaContainer = document.getElementById('youarea-container');
@@ -277,7 +278,7 @@ function handleFormSubmit(event) {
 
   const formPart3 = document.getElementById('form-part-03');
   if (validateForm(formPart3)) {
-    showToast('loading', 'Sending your booking…');
+    showToast('loading', t('toast_loading'));
     logFormData(submitBtn);
   } else {
     if (submitBtn) submitBtn.disabled = false;
@@ -393,12 +394,12 @@ function sendFormDataToServer(formData, submitBtn) {
   })
   .then(response => {
     console.log('Booking submitted successfully:', response);
-    showToast('success', 'Thank you! Your booking was submitted.', TOAST_SUCCESS_MS);
+    showToast('success', t('toast_success'), TOAST_SUCCESS_MS);
     if (submitBtn) submitBtn.disabled = false;
   })
   .catch(err => {
     console.error('Error submitting booking:', err);
-    showToast('error', 'Something went wrong. Please try again.', TOAST_ERROR_MS);
+    showToast('error', t('toast_error'), TOAST_ERROR_MS);
     if (submitBtn) submitBtn.disabled = false;
   });
 }

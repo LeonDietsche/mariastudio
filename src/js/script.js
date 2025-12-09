@@ -25,8 +25,35 @@ let maxFocalLength;
 let pinchDistanceStart = 0, pinchDistanceEnd = 0;
 let wasMobile = null;         // last known device class
 
-init();
-animate();
+// 🔥 NEW: Render-State + Idle-Timer
+let isRendering = false;
+let idleTimeout = null;
+
+function startRendering() {
+  // wird bei jeder Interaktion aufgerufen
+  if (!isRendering) {
+    isRendering = true;
+    requestAnimationFrame(animate);
+  }
+  resetIdleTimer();
+}
+
+function stopRendering() {
+  isRendering = false;
+}
+
+function resetIdleTimer() {
+  clearTimeout(idleTimeout);
+  // nach 1.2s ohne neue Interaktion rendern wir nicht mehr weiter
+  idleTimeout = setTimeout(() => {
+    stopRendering();
+  }, 1200);
+}
+
+window.addEventListener('load', () => {
+  init();
+  // startRendering(); // statt direkt animate()
+});
 
 function wW() { return window.innerWidth; }
 function wH() { return window.innerHeight; }
@@ -67,9 +94,11 @@ function init() {
 
   // RENDERER (crisper on HiDPI, but keep mobile reasonable)
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.domElement.style.opacity = '0';
+renderer.domElement.style.transition = 'opacity 0.6s ease';
   const dpr = isMobile()
-    ? Math.min(2, window.devicePixelRatio)
-    : Math.max(1, Math.min(3, window.devicePixelRatio));
+    ? 1            // mobile: just 1x – huge perf win
+    : Math.min(1.5, window.devicePixelRatio);  // desktop: max 1.5x
   renderer.setPixelRatio(dpr);
   renderer.setSize(wW(), wH());
   if ('outputColorSpace' in renderer) {
@@ -86,9 +115,29 @@ function init() {
   const geometry = new THREE.SphereGeometry(500, segW, segH);
   geometry.scale(-1, 1, 1);
 
-  // TEXTURE
+   // TEXTURE mit Poster-Fade
+ // TEXTURE mit Canvas-Fade
   const texFile = (import.meta.env.BASE_URL || '/') + (isMobile() ? TEX_MOBILE : TEX_DESKTOP);
-  const texture = new THREE.TextureLoader().load(texFile);
+
+  // Canvas zuerst unsichtbar (damit du nur das weiße Body-Background siehst)
+  renderer.domElement.style.opacity = '0';
+  renderer.domElement.style.transition = 'opacity 0.6s ease';
+
+  // optional: falls WebGL mal ohne Textur cleared, ist es trotzdem weiß
+  renderer.setClearColor(0xffffff, 1);
+
+  const loader = new THREE.TextureLoader();
+  const texture = loader.load(
+    texFile,
+    () => {
+      // ✅ Textur geladen → Canvas einblenden
+      renderer.domElement.style.opacity = '1';
+
+      // jetzt erst rendern
+      startRendering();
+    }
+  );
+
   if ('colorSpace' in texture) texture.colorSpace = THREE.SRGBColorSpace;
   else texture.encoding = THREE.SRGBEncoding;
   texture.generateMipmaps = true;
@@ -97,6 +146,7 @@ function init() {
   const material = new THREE.MeshBasicMaterial({ map: texture });
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
+
 
   // 🔑 Apply device preset AFTER camera exists
   applyDeviceCameraPreset();
@@ -129,10 +179,12 @@ function onWindowResize() {
   }
 
   const dpr = mobile
-    ? Math.min(2, window.devicePixelRatio)
-    : Math.max(1, Math.min(3, window.devicePixelRatio));
+    ? 1
+    : Math.min(1.5, window.devicePixelRatio);
   renderer.setPixelRatio(dpr);
   renderer.setSize(wW(), wH());
+
+  startRendering(); // 🔥 nach Resize kurz rendern
 }
 
 let onPointerDownPointerX, onPointerDownPointerY, onPointerDownLon, onPointerDownLat;
@@ -140,6 +192,8 @@ let onPointerDownPointerX, onPointerDownPointerY, onPointerDownLon, onPointerDow
 function onMouseDown(e) {
   e.preventDefault();
   isUserInteracting = true;
+  startRendering(); // 🔥 Render starten
+
   const cover = document.getElementById('cover');
   if (cover) cover.style.opacity = 0;
 
@@ -154,6 +208,8 @@ function onMouseMove(e) {
     const sensitivity = window.innerWidth <= 1024 ? 0.3 : 0.2;
     lon = (onPointerDownPointerX - e.clientX) * sensitivity + onPointerDownLon;
     lat = (e.clientY - onPointerDownPointerY) * sensitivity + onPointerDownLat;
+
+    startRendering(); // 🔥 bei Bewegung rendern
   }
 }
 
@@ -179,9 +235,13 @@ function onMouseWheel(e) {
   focalLength = clampFocal(focalLength);
   camera.setFocalLength(focalLength);
   camera.updateProjectionMatrix();
+
+  startRendering(); // 🔥 nach Scroll-Zoom rendern
 }
 
 function onTouchStart(e) {
+  startRendering(); // 🔥 Interaktion = render
+
   if (e.touches.length === 1) {
     onMouseDown({
       clientX: e.touches[0].clientX,
@@ -208,6 +268,7 @@ function onTouchMove(e) {
     camera.updateProjectionMatrix();
 
     pinchDistanceStart = pinchDistanceEnd;
+    startRendering(); // 🔥 während Pinch rendern
   } else if (e.touches.length === 1) {
     onMouseMove({
       clientX: e.touches[0].clientX,
@@ -229,9 +290,11 @@ function getPinchDistance(touches) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
+// 🔥 geändert: rendert nur, solange isRendering true ist
 function animate() {
-  requestAnimationFrame(animate);
+  if (!isRendering) return;
   update();
+  requestAnimationFrame(animate);
 }
 
 function update() {

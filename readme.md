@@ -1,6 +1,8 @@
 DEMO: https://leondietsche.github.io/mariastudio/
 
 npm run build:root        # for Plesk root deploy (https://test.maria.studio/)
+update ./assets & ./info & ./book with the new generated js and css
+
 npm run build:subpath     # or :win / :ps for XAMPP at /mariastudio/
 
 

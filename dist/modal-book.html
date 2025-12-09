@@ -1,6 +1,3 @@
-<div id="form-loading" class="hidden">Sending your booking...</div>
-<div id="form-success" class="hidden">✅ Thank you! Your booking was submitted.</div>
-<div id="form-error" class="hidden">❌ Something went wrong. Please try again.</div>
 <div class="grid">
     <div id="main-book-01" class="form-part">
         <form id="form-part-01">
@@ -11,7 +8,7 @@
                     </div>
                 </div>
                 <div class="text-container-01-02">
-                    <h1 id="">Booking Request Form</h1>
+                    <h1 id="_book01_title">Booking Request Form</h1>
                 </div>
             </div>
             <div class="main-split-container">
@@ -33,7 +30,7 @@
                     </div>
                 </div>
                     <div class="text-container-01-02">
-                        <h2 for="contact_shootdays">Total shoot days*</h2>
+                        <h2 id="_book01_2_shootdays" for="contact_shootdays">Total shoot days*</h2>
                         <input type="number" id="contact_shootdays" name="contact_shootdays" min="0">           
                     </div>
             </div>
@@ -57,7 +54,7 @@
                     </div>
                 </div>
                     <div class="text-container-01-02">
-                        <h2 for="contact_name">Name*</h2>
+                        <h2 id="_book01_4_name" for="contact_name">Name*</h2>
                         <input type="text" id="name" name="contact_name" required>
                     </div>
             </div>
@@ -69,7 +66,7 @@
                     </div>
                 </div>
                     <div class="text-container-01-02">
-                        <h2 for="contact_company">Company</h2>
+                        <h2 id="_book01_5_company" for="contact_company">Company</h2>
                         <input type="text" id="company" name="contact_company">
                     </div>
             </div>
@@ -81,7 +78,7 @@
                     </div>
                 </div>
                     <div class="text-container-01-02">
-                        <h2 for="contact_phone">Phone*</h2>
+                        <h2 id="_book01_6_phone" for="contact_phone">Phone*</h2>
                         <input type="tel" id="phone" name="contact_phone" required>
                         <!-- <input type="tel" id="phone" name="contact_phone"> -->
                     </div>
@@ -96,27 +93,29 @@
                     </div>
                 </div>
                 <div class="text-container-01-02">
-                    <h2 for="contact_firsttime">Is this your first booking with us?*</h2>
+                    <h2 id="_book01_7_firsttime" for="contact_firsttime">Is this your first booking with us?*</h2>
                     <div class="custom-radio">
-                        <label for="firsttime-yes" class="custom-radio-label">
+                        <label for="firsttime_yes" class="custom-radio-label">
                             <img src="/radio_button_unchecked.png" alt="Yes" class="radio-img" id="img-yes">
-                            <input type="radio" id="firsttime-yes" name="contact_firsttime" value="yes" class="radio-input"> Yes
+                            <input type="radio" id="firsttime_yes" name="contact_firsttime" value="yes" class="radio-input">
+                             <span id="firsttime_yes_span">Yes</span>
                         </label>
-                        <label for="firsttime-no" class="custom-radio-label">
+                        <label for="firsttime_no" class="custom-radio-label">
                             <img src="/radio_button_unchecked.png" alt="No" class="radio-img" id="img-no">
-                            <input type="radio" id="firsttime-no" name="contact_firsttime" value="no" class="radio-input"> No
+                            <input type="radio" id="firsttime_no" name="contact_firsttime" value="no" class="radio-input">
+                            <span id="firsttime_no_span">No</span>
                         </label>
                     </div>
                     <div id="youarea-container" class="hidden">
-                        <h2 for="youarea">Are you a?*</h2>
+                        <h2 id="_book01_8_youarea" for="youarea">Are you a?*</h2>
                         <select id="youarea" name="youarea">
-                            <option value="producer">Producer</option>
-                            <option value="photographer">Photographer</option>
-                            <option value="director">Director</option>
-                            <option value="talentagent">Talent Agent</option>
-                            <option value="magazine">Magazine</option>
-                            <option value="brand">Brand</option>
-                            <option value="Other">Other</option>
+                            <option id="_book01_8_youarea_producer" value="producer">Producer</option>
+                            <option id="_book01_8_youarea_photographer" value="photographer">Photographer</option>
+                            <option id="_book01_8_youarea_director" value="director">Director</option>
+                            <option id="_book01_8_youarea_talentagent" value="talentagent">Talent Agent</option>
+                            <option id="_book01_8_youarea_magazine" value="magazine">Magazine</option>
+                            <option id="_book01_8_youarea_brand" value="brand">Brand</option>
+                            <option id="_book01_8_youarea_other" value="other">Other</option>
                         </select>
                         <br>
                         <br>
@@ -136,7 +135,7 @@
                     </div>
                 </div>
                 <div class="text-container-01-02">
-                    <h1>general info and project details</h1>
+                    <h1 id="_book02_1_general_info_project_details">general info and project details</h1>
                 </div>
             </div>
             <div class="main-split-container">
@@ -146,14 +145,14 @@
                     </div>
                 </div>
                 <div class="text-container-01-02">
-                    <h2 for="general_project-type">Type of Project*</h2>
+                    <h2 id="_book02_1_general_project_type" for="general_project-type">Type of Project*</h2>
                     <select id="project-type" name="general_project-type">
-                        <option value="Campaign">Campaign</option>
-                        <option value="Editorial">Editorial</option>
-                        <option value="Lookbook">Lookbook</option>
-                        <option value="Ecommerce">Ecommerce</option>
-                        <option value="Personal">Personal</option>
-                        <option value="Other">Other</option>
+                        <option id="_book02_1_general_project_type_campaign" value="Campaign">Campaign</option>
+                        <option id="_book02_1_general_project_type_editorial" value="Editorial">Editorial</option>
+                        <option id="_book02_1_general_project_type_lookbook" value="Lookbook">Lookbook</option>
+                        <option id="_book02_1_general_project_type_ecommerce" value="Ecommerce">Ecommerce</option>
+                        <option id="_book02_1_general_project_type_personal" value="Personal">Personal</option>
+                        <option id="_book02_1_general_project_type_other" value="Other">Other</option>
                     </select>
                 </div>
             </div>
@@ -168,28 +167,28 @@
                 </div>
                 <div class="text-container-01-02">
                     <div id="photographer-container">
-                        <h2 for="general_photographer">Photographer/Director</h2>
+                        <h2 id="_book02_1_general_photographer" for="general_photographer">Photographer/Director</h2>
                         <input type="text" id="photographer" name="general_photographer">
                         <br>
                         <br>
                     </div>
 
                     <div id="brandname-container">
-                        <h2 for="general_brandname">Brand name</h2>
+                        <h2 id="_book02_1_general_brandname" for="general_brandname">Brand name</h2>
                         <input type="text" id="brandname" name="general_brandname">
                         <br>
                         <br>
                     </div>
         
                     <div id="magazinename-container" class="hidden">
-                        <h2 for="general_magazinename">Magazine name</h2>
+                        <h2 id="_book02_1_general_magazinename" for="general_magazinename">Magazine name</h2>
                         <input type="text" id="magazinename" name="general_magazinename">
                         <br>
                         <br>
                     </div>
         
                     <div id="tellusmore-container" class="hidden">
-                        <h2 for="general_tellusmore">Tell us more</h2>
+                        <h2 id="_book02_1_general_tellusmore" for="general_tellusmore">Tell us more</h2>
                         <textarea id="tellusmore" name="general_tellusmore" style="min-height: 4em;"></textarea>
                         <br>
                         <br>
@@ -206,13 +205,13 @@
                     </div>
                 </div>
                 <div class="text-container-01-02">
-                    <h2 for="general_numberofpeople">Number of people on set</h2>
+                    <h2 id="_book02_1_general_numberofpeople" for="general_numberofpeople">Number of people on set</h2>
                     <select id="numberofpeople" name="general_numberofpeople">
-                        <option value="1to10">1 to 10</option>
-                        <option value="11to20">11 to 20</option>
-                        <option value="20+">20+</option>
-                        <option value="30+">30+</option>
-                        <option value="No idea">No idea</option>
+                        <option id="_book02_1_general_numberofpeople_1to10" value="1to10">1 to 10</option>
+                        <option id="_book02_1_general_numberofpeople_11to20" value="11to20">11 to 20</option>
+                        <option id="_book02_1_general_numberofpeople_20plus" value="20+">20+</option>
+                        <option id="_book02_1_general_numberofpeople_30plus" value="30+">30+</option>
+                        <option id="_book02_1_general_numberofpeople_noidea" value="No idea">No idea</option>
                     </select>
                 </div>
             </div>
@@ -226,23 +225,25 @@
                     </div>
                 </div>
                 <div class="text-container-01-02">
-                    <h2 for="general_equipmentlistready">Do you have the EQ list ready?*</h2>
+                    <h2 id="_book02_1_general_equipmentlistready" for="general_equipmentlistready">Do you have the EQ list ready?*</h2>
                     <div class="custom-radio">
                         <label for="equipmentlistreadyyes" class="custom-radio-label">
                             <img src="/radio_button_unchecked.png" alt="Yes" class="radio-img" id="eq-img-yes">
-                            <input type="radio" id="equipmentlistreadyyes" name="general_equipmentlistready" value="yes" class="radio-input"> Yes
+                            <input type="radio" id="equipmentlistreadyyes" name="general_equipmentlistready" value="yes" class="radio-input"> 
+                            <span id="equipmentlistreadyyes_span">Yes</span>
                         </label>
                         <label for="equipmentlistreadyno" class="custom-radio-label">
                             <img src="/radio_button_unchecked.png" alt="No" class="radio-img" id="eq-img-no">
-                            <input type="radio" id="equipmentlistreadyno" name="general_equipmentlistready" value="no" class="radio-input"> No
+                            <input type="radio" id="equipmentlistreadyno" name="general_equipmentlistready" value="no" class="radio-input"> 
+                            <span id="equipmentlistreadyno_span">No</span>
                         </label>
                     </div>
                     <br>
                     <div id="eqlist-container" class="hidden">
-                        <h2 for="general_eqlisttext">Please paste your equipment list here:</h2>
+                        <h2 id="_book02_1_general_eqlisttext" for="general_eqlisttext">Please paste your equipment list here:</h2>
                         <textarea id="eqlisttext" name="general_eqlisttext" style="min-height: 4em;"></textarea>
                         <br>
-                        <h2 for="general_eqlistfile">or Upload File</h2>
+                        <h2 id="_book02_1_general_eqlistfile" for="general_eqlistfile">or Upload File</h2>
                         <input class="input-no-underline" type="file" id="eqlistfile" name="general_eqlistfile">
                     </div>
                     <br>
@@ -263,7 +264,7 @@
                     </div>
                 </div>
                 <div class="text-container-03">
-                    <h1>Billing Details</h1>
+                    <h1 id="_book03_title">Billing Details</h1>
                 </div>
             </div>
 
@@ -275,17 +276,17 @@
                     </div>
                 </div>
                 <div class="text-container-03">
-                    <h2 for="billing_details">Specify Billing Details</h2>
+                    <h2 id="_book03_1_specify_billing_details" for="billing_details">Specify Billing Details</h2>
                     <div class="custom-radio">
                         <label for="billingdetails-same" class="custom-radio-label">
                             <img src="/radio_button_unchecked.png" alt="Same" class="radio-img" id="billing-img-same">
                             <input type="radio" id="billingdetails-same" name="billing_details" value="same" class="radio-input" required> 
-                            Same
+                            <span id="_book03_same">Same</span>
                         </label>
                         <label for="billingdetails-new" class="custom-radio-label">
                             <img src="/radio_button_unchecked.png" alt="New" class="radio-img" id="billing-img-new">
                             <input type="radio" id="billingdetails-new" name="billing_details" value="new" class="radio-input" required> 
-                            New
+                            <span id="_book03_new">New</span>
                         </label>
                     </div>
                 </div>
@@ -300,7 +301,7 @@
                         </div>
                     </div>
                     <div class="text-container-03">
-                        <h2 for="billing_company">Company</h2>
+                        <h2 id="_book03_2_company" for="billing_company">Company</h2>
                         <input type="text" id="billingcompany" name="billing_company">
                     </div>
                 </div>
@@ -313,7 +314,7 @@
                     </div>
                     <div class="text-container-03">
                         <div class="form-group">
-                            <h2 for="billing_company">Billing Address</h2>
+                            <h2 id="_book03_3_billing_address" for="billing_company">Billing Address</h2>
                             <input type="text" 
                                 class="form-control" 
                                 id="billingstreet" 
@@ -355,7 +356,7 @@
                         </div>
                     </div>
                     <div class="text-container-03">
-                        <h2 for="billing_vatnumber">VAT number</h2>
+                        <h2 id="_book03_4_vat_number" for="billing_vatnumber">VAT number</h2>
                         <input type="text" id="billingvatnumber" name="billing_vatnumber">
                     </div>
                 </div>
@@ -368,7 +369,7 @@
                 </div>
                 <div class="text-container-03">
                     <button type="button" id="backBtn3" class="back-btn">Back</button>
-                    <button type="submit" class="submit-btn">Submit</button>
+                    <button type="submit" id="submitBtn3" class="submit-btn">Submit</button>
                 </div>
             </div>
           </form>
