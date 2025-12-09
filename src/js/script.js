@@ -97,8 +97,8 @@ function init() {
   renderer.domElement.style.opacity = '0';
 renderer.domElement.style.transition = 'opacity 0.6s ease';
   const dpr = isMobile()
-    ? 1            // mobile: just 1x – huge perf win
-    : Math.min(1.5, window.devicePixelRatio);  // desktop: max 1.5x
+    ? Math.min(2, window.devicePixelRatio)
+    : Math.max(1, Math.min(3, window.devicePixelRatio));
   renderer.setPixelRatio(dpr);
   renderer.setSize(wW(), wH());
   if ('outputColorSpace' in renderer) {
@@ -179,8 +179,8 @@ function onWindowResize() {
   }
 
   const dpr = mobile
-    ? 1
-    : Math.min(1.5, window.devicePixelRatio);
+    ? Math.min(2, window.devicePixelRatio)
+    : Math.max(1, Math.min(3, window.devicePixelRatio));
   renderer.setPixelRatio(dpr);
   renderer.setSize(wW(), wH());
 
