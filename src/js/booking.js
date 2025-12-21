@@ -111,7 +111,15 @@ document.addEventListener('modalOpened', () => {
 
   const projectTypeDropdown = document.getElementById('project-type');
   if (projectTypeDropdown) {
-    projectTypeDropdown.addEventListener('change', toggleInputsBasedOnProjectType);
+    projectTypeDropdown.addEventListener('change', () => {
+      toggleInputsBasedOnProjectType();              // keeps brand/magazine/tellusmore logic
+      updatePhotographerContainerVisibility();       // overrides photographer visibility properly
+    });
+  }
+
+  const youAreaSelect = document.getElementById('youarea');
+  if (youAreaSelect) {
+    youAreaSelect.addEventListener('change', updatePhotographerContainerVisibility);
   }
 
   const equipmentListReadyYes = document.getElementById('equipmentlistreadyyes');
@@ -155,13 +163,13 @@ function toggleFirstTimeBooking() {
 
 function toggleInputsBasedOnProjectType() {
   const projectType = document.getElementById('project-type').value;
-  const photographerContainer = document.getElementById('photographer-container');
+  // const photographerContainer = document.getElementById('photographer-container');
   const brandNameContainer    = document.getElementById('brandname-container');
   const magazineNameContainer = document.getElementById('magazinename-container');
   const tellUsMoreContainer   = document.getElementById('tellusmore-container');
 
   // Photographer for all except Ecommerce
-  photographerContainer.classList.toggle('hidden', projectType === 'Ecommerce');
+  // photographerContainer.classList.toggle('hidden', projectType === 'Ecommerce');
 
   // Brand for Campaign/Lookbook/Ecommerce
   brandNameContainer.classList.toggle('hidden', !['Campaign','Lookbook','Ecommerce'].includes(projectType));
@@ -171,6 +179,25 @@ function toggleInputsBasedOnProjectType() {
 
   // Tell us more for Personal/Other
   tellUsMoreContainer.classList.toggle('hidden', !['Personal','Other'].includes(projectType));
+}
+
+function updatePhotographerContainerVisibility() {
+  const projectType = document.getElementById('project-type')?.value;
+  const youArea     = document.getElementById('youarea')?.value; // producer/photographer/...
+
+  const photographerContainer = document.getElementById('photographer-container');
+  if (!photographerContainer) return;
+
+  // Rule A: if user is the photographer, never show the field
+  const hideBecauseUserIsPhotographer = (youArea === 'photographer');
+
+  // Rule B: otherwise follow project type rule (hide for Ecommerce)
+  const hideBecauseProjectType = (projectType === 'Ecommerce');
+
+  photographerContainer.classList.toggle(
+    'hidden',
+    hideBecauseUserIsPhotographer || hideBecauseProjectType
+  );
 }
 
 function toggleEQListFields() {

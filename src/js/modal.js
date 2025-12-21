@@ -310,9 +310,9 @@ function initializeDesktopHoverEffect() {
 
   if (videoItem && videoContainer) {
     videoItem.addEventListener('mouseover', () => {
-      const videoPath = '/videos/video-001_maria_studio.mp4';
+      const videoPath = '/videos/video-001_maria_studio.webm';
       modal.style.opacity = 1;
-      videoContainer.innerHTML = `<video src="${videoPath}") autoplay loop></video>`;
+      videoContainer.innerHTML = `<video src="${videoPath}" autoplay loop></video>`;
       videoContainer.style.opacity = 1;
       videoContainer.style.display = 'block';
     });
