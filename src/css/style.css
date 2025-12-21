@@ -1,25 +1,23 @@
 @font-face {
   font-family: OCR-X;
-  src: url(/fonts/OCR-X-Regular.woff)
-  format("woff"); 
+  src: url(/fonts/OCR-X-Regular.woff) format("woff");
   font-display: swap;
 }
 
 @font-face {
   font-family: OCR-X-Thin;
-  src: url(/fonts/OCR-X-Thin.woff)
-  format("woff"); 
+  src: url(/fonts/OCR-X-Thin.woff) format("woff");
   font-display: swap;
 }
 
 @font-face {
   font-family: OCR-X-Light;
-  src: url(/fonts/OCR-X-Light.woff)
-  format("woff"); 
+  src: url(/fonts/OCR-X-Light.woff) format("woff");
   font-display: swap;
 }
 
-body, html {
+body,
+html {
   font-size: 12px;
   font-family: OCR-X;
   margin: 0;
@@ -50,26 +48,39 @@ header {
   margin-left: 1vw;
   width: calc(100% - 2vw);
   /* Header ist Grid (über .grid), daher: */
-  align-items: center; /* vertikal mittig in der Grid-Zeile */
+  align-items: center;
+  /* vertikal mittig in der Grid-Zeile */
+  pointer-events: none;
 }
 
 
 .header-01 {
   grid-column: 1 / 2;
+  grid-row: 2;
+  margin-top: 45vh;
+  pointer-events: auto;
 }
 
 .header-02 {
-  grid-column: 2 / 3;
+  grid-column: 15;
+  grid-row: 2;
+  text-align: right;
+  margin-top: 45vh;
+  pointer-events: auto;
 }
 
 .header-03 {
-  grid-column: 14 / 15;
+  grid-column: 15;
+  grid-row: 1;
   text-align: right;
+  pointer-events: auto;
 }
 
 .header-04 {
-  grid-column: 15;
-  text-align:right;
+  grid-column: 8;
+  grid-row: 1;
+  text-align: center;
+  pointer-events: auto;
 }
 
 
@@ -77,13 +88,13 @@ h1 {
   color: black;
   font-family: OCR-X;
   font-size: 10px;
-  line-height:1.3em;
+  line-height: 1.3em;
   font-weight: normal;
-  text-transform:uppercase;
-  margin:0;
+  text-transform: uppercase;
+  margin: 0;
   /* position:relative; */
   /* left: -19px; */
-  padding-bottom: 0.2em; 
+  padding-bottom: 0.2em;
 }
 
 
@@ -91,59 +102,67 @@ h2 {
   color: black;
   font-family: OCR-X;
   font-size: 10px;
-  line-height:1.3em;
+  line-height: 1.3em;
   font-weight: normal;
-  text-transform:uppercase;
-  margin:0;
+  text-transform: uppercase;
+  margin: 0;
   /* position:relative; */
   /* left: -30px; */
-  padding-bottom: 0.2em; 
+  padding-bottom: 0.2em;
 }
 
 h3 {
-  color: black;
+  color: #000;
   font-family: OCR-X;
   font-size: 12px;
-  line-height:1.3em;
+  line-height: 1.3em;
   font-weight: normal;
-  text-transform:uppercase;
-  margin:0;
+  text-transform: uppercase;
+  margin: 0;
   /* position:relative; */
   /* left: -30px; */
-  padding-bottom: 0.2em; 
+  padding-bottom: 0.2em;
 }
 
 /* Nur im Header: Text, Linie & Icon inline zentriert */
 header h3 {
   display: inline-flex;
   align-items: center;
-  gap: 0.5em;       /* Abstand zwischen Text und Separator/Icon */
-  line-height: 1;   /* keine zusätzliche Luft */
-  padding-bottom: 0;/* überschreibt globales 0.2em */
+  gap: 0.5em;
+  /* Abstand zwischen Text und Separator/Icon */
+  line-height: 1;
+  /* keine zusätzliche Luft */
+  padding-bottom: 0;
+  /* überschreibt globales 0.2em */
 }
 
 
 p {
   font-family: OCR-X;
   font-size: 12px;
-  line-height:1.3em;
-  text-transform:uppercase;
+  line-height: 1.3em;
+  text-transform: uppercase;
   margin: 0px;
 }
 
 a {
-  color:rgb(0, 0, 0);
+  color: rgb(0, 0, 0);
   font-family: OCR-X;
   font-size: 12px;
-  line-height:1.3em;
-  text-transform:uppercase;
+  line-height: 1.3em;
+  text-transform: uppercase;
   text-decoration: none;
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
 }
 
-label, input, textarea, button, select {
-  font-family: OCR-X; /* Apply font to form elements */
+label,
+input,
+textarea,
+button,
+select {
+  font-family: OCR-X;
+  /* Apply font to form elements */
   font-weight: normal;
   font-size: 12px;
   text-transform: uppercase;
@@ -161,7 +180,7 @@ button {
   padding-top: 2px;
   padding-bottom: 2px;
   padding-right: 6px;
-  padding-left: 6px;  
+  padding-left: 6px;
   margin-left: -6px;
   /* color: white; */
   border: none;
@@ -171,7 +190,7 @@ button {
   padding-top: 0px;
   padding-bottom: 0px;
   padding-right: 0px;
-  padding-left: 0px;  
+  padding-left: 0px;
   margin-left: 0px;
 }
 
@@ -219,15 +238,18 @@ input {
 /* Stack radio buttons and labels vertically */
 .custom-radio-billing {
   display: flex;
-  flex-direction: column; /* Stack elements vertically */
+  flex-direction: column;
+  /* Stack elements vertically */
   /* gap: 10px;  Space between each radio button/label pair */
 }
 
 /* Align radio button with the label text */
 .custom-radio-billing label {
   display: flex;
-  align-items: center; /* Align text and radio button */
-  font-family: OCR-X; /* Existing font style */
+  align-items: center;
+  /* Align text and radio button */
+  font-family: OCR-X;
+  /* Existing font style */
   font-weight: normal;
   font-size: 8pt;
   text-transform: uppercase;
@@ -261,7 +283,8 @@ select option {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  z-index: 0; /* Hintergrund */
+  z-index: 0;
+  /* Hintergrund */
 }
 
 /* WebGL-Canvas füllt den Container */
@@ -291,7 +314,7 @@ select option {
 }
 
 main:hover {
-  cursor:grab;
+  cursor: grab;
 }
 
 label {
@@ -300,101 +323,123 @@ label {
   font-size: 12px;
   line-height: 1.3em;
   font-weight: normal;
-  text-transform:uppercase;
+  text-transform: uppercase;
 }
 
 button:hover {
-  cursor: pointer; 
+  cursor: pointer;
 }
 
 #main-01 p:hover {
-  cursor: text; 
+  cursor: text;
 }
 
 .main-split-container {
   display: flex;
-  justify-content: flex-start; /* Align items to the left */
-  width: 100%; /* Ensure it takes full width */
-  align-items: baseline; /* Align items on baseline */
+  justify-content: flex-start;
+  /* Align items to the left */
+  width: 100%;
+  /* Ensure it takes full width */
+  align-items: baseline;
+  /* Align items on baseline */
 }
 
 .number-container-01-02 {
-  width: 15%; /* Fixed width for the number column */
-  text-align: right; /* Align numbers to the right */
-  margin-right: 7px; /* Space between number and heading */
-  display: flex; 
-  align-items: baseline; /* Align numbers with heading baseline */
+  width: 15%;
+  /* Fixed width for the number column */
+  text-align: right;
+  /* Align numbers to the right */
+  margin-right: 7px;
+  /* Space between number and heading */
+  display: flex;
+  align-items: baseline;
+  /* Align numbers with heading baseline */
 }
 
 .number-container-03 {
-  width: 11.25%; /* Fixed width for the number column */
-  text-align: right; /* Align numbers to the right */
-  margin-right: 7px; /* Space between number and heading */
-  display: flex; 
-  align-items: baseline; /* Align numbers with heading baseline */
+  width: 11.25%;
+  /* Fixed width for the number column */
+  text-align: right;
+  /* Align numbers to the right */
+  margin-right: 7px;
+  /* Space between number and heading */
+  display: flex;
+  align-items: baseline;
+  /* Align numbers with heading baseline */
 }
 
 .number-container-04 {
-  width: 11.25%; /* Fixed width for the number column */
-  text-align: right; /* Align numbers to the right */
-  margin-right: 7px; /* Space between number and heading */
-  display: flex; 
-  align-items: baseline; /* Align numbers with heading baseline */
+  width: 11.25%;
+  /* Fixed width for the number column */
+  text-align: right;
+  /* Align numbers to the right */
+  margin-right: 7px;
+  /* Space between number and heading */
+  display: flex;
+  align-items: baseline;
+  /* Align numbers with heading baseline */
 }
 
-.text-container-01-02{
+.text-container-01-02 {
   width: 80%;
 }
 
-.text-container-03{
+.text-container-03 {
   width: 85%;
 }
 
-.text-container-04{
+.text-container-04 {
   width: 85%;
 }
 
-#number-digit-underline{
-  margin-left: auto; /* Pushes the element to the right within flex container */
+#number-digit-underline {
+  margin-left: auto;
+  /* Pushes the element to the right within flex container */
   font-size: 10px;
   border-bottom: 0.533px solid #000;
 }
 
 a:hover {
-  cursor: pointer; 
+  cursor: pointer;
 }
 
-#pdf { 
+#pdf {
   text-decoration-line: underline;
   text-decoration-thickness: 0.533px;
   text-underline-offset: 2.6px;
 }
 
-a#pdf:hover, a#pdf:active {
+a#pdf:hover,
+a#pdf:active {
   cursor: pointer !important;
 }
 
-main > div{
+main>div {
   position: absolute;
 }
 
 
-#toggleInfoBtn, #toggleLanguageBtn, #toggleBookBtn {
+#toggleInfoBtn,
+#toggleLanguageBtn,
+#toggleBookBtn {
   background: none;
   border: none;
   padding: 0;
 }
 
-#toggleInfoPipe, #toggleBookPipe{
+#toggleInfoPipe,
+#toggleBookPipe {
   display: none;
   height: 1em;
   vertical-align: middle;
-  border-left: 0.533px solid currentColor; /* wirklich 0.533px */
+  border-left: 0.533px solid currentColor;
+  /* wirklich 0.533px */
   margin-left: 1em;
 }
 
 #closeModalBtn {
-  display: none;  /* Hide by default */
+  display: none;
+  /* Hide by default */
   background: none;
 }
 
@@ -405,7 +450,7 @@ main > div{
   z-index: 999;
   width: 100%;
   height: 100%;
-  background-color:white;
+  background-color: white;
   opacity: 90%;
   overflow-x: hidden;
 }
@@ -413,14 +458,15 @@ main > div{
 .modal-body {
   margin-right: 1vw;
   margin-left: 1vw;
-  margin-top:29vh;
+  margin-top: 29vh;
 }
 
 #main-01 {
   display: flex;
-  flex-direction: column; /* Stack elements vertically */
+  flex-direction: column;
+  /* Stack elements vertically */
   z-index: 999;
-  grid-row:1;
+  grid-row: 1;
   grid-column: 2 / 5;
 }
 
@@ -432,56 +478,60 @@ main > div{
 
 #main-book-01 {
   margin: 0;
-  grid-row:1;
+  grid-row: 1;
   grid-column: 2 / 5;
 }
 
 #main-01-carousel {
   display: none;
-    /* smooth appearance when it becomes visible in mobile mode */
+  /* smooth appearance when it becomes visible in mobile mode */
   opacity: 0;
   transition: opacity 0.25s ease;
 }
 
 #main-02 {
   display: flex;
-  flex-direction: column; /* Stack elements vertically */
+  flex-direction: column;
+  /* Stack elements vertically */
   /* font-size: 13px; */
   z-index: 997;
-  grid-row:1;
+  grid-row: 1;
   grid-column: 5 / 8;
 }
 
 #main-book-02 {
   margin: 0;
-  grid-row:1;
+  grid-row: 1;
   grid-column: 5 / 8;
 }
 
 #main-03 {
   display: flex;
-  flex-direction: column; /* Stack elements vertically */
+  flex-direction: column;
+  /* Stack elements vertically */
   z-index: 997;
-  grid-row:1;
+  grid-row: 1;
   grid-column: 8 / 12;
 }
 
 #main-book-03 {
   margin: 0;
-  grid-row:1;
+  grid-row: 1;
   grid-column: 8 / 12;
 }
 
 #main-04 {
   display: flex;
-  flex-direction: column; /* Stack elements vertically */
+  flex-direction: column;
+  /* Stack elements vertically */
   z-index: 997;
-  grid-row:1;
-  grid-column: 12  / 16;
+  grid-row: 1;
+  grid-column: 12 / 16;
 }
 
 #image-container {
-  display: none; /* Hide initially */
+  display: none;
+  /* Hide initially */
   position: absolute;
   top: 0;
   left: 0;
@@ -489,9 +539,12 @@ main > div{
   bottom: 0;
   background-size: cover;
   background-position: center;
-  transition: opacity 0.3s ease; /* Smooth transition for opacity */
-  opacity: 0; /* Initially hidden */
-  z-index: 998; /* Ensure it is on top */
+  transition: opacity 0.3s ease;
+  /* Smooth transition for opacity */
+  opacity: 0;
+  /* Initially hidden */
+  z-index: 998;
+  /* Ensure it is on top */
 }
 
 #image-container img {
@@ -500,31 +553,37 @@ main > div{
 }
 
 #video-container {
-  display: none; /* Hide initially */
+  display: none;
+  /* Hide initially */
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  overflow: hidden; /* Prevent scrollbars */
+  overflow: hidden;
+  /* Prevent scrollbars */
   background-size: cover;
   background-position: center;
-  opacity: 0; /* Initially hidden */
-  z-index: 998; /* Ensure it is above the image container */
+  opacity: 0;
+  /* Initially hidden */
+  z-index: 998;
+  /* Ensure it is above the image container */
 }
 
 #video-container video {
-  width: 100%; /* Fill the container */
+  width: 100%;
+  /* Fill the container */
   height: 100%;
   object-fit: cover;
 }
 
 
 .preload {
-  display: none; /* Hide preloaded images */
+  display: none;
+  /* Hide preloaded images */
 }
 
-.modal-footer-placeholder{
+.modal-footer-placeholder {
   opacity: 0;
 }
 
@@ -532,8 +591,9 @@ main > div{
   text-decoration-line: none;
 }
 
-footer{
-  width: calc(100% - 2vw); /* Adjusts the width to account for both margins */
+footer {
+  width: calc(100% - 2vw);
+  /* Adjusts the width to account for both margins */
   margin-right: 1vw;
   margin-left: 1vw;
   margin-bottom: 1vh;
@@ -543,11 +603,11 @@ footer{
   z-index: 1000;
 }
 
-.footer-phone{
+.footer-phone {
   display: none;
 }
 
-.footer-desktop{
+.footer-desktop {
   display: block;
 }
 
@@ -558,8 +618,8 @@ footer{
 
 .footer-02 {
   z-index: 1000;
-  text-align:center;
-  grid-column: 6 / 11;
+  text-align: center;
+  grid-column: 7 / 10;
 }
 
 .footer-03 {
@@ -579,12 +639,13 @@ footer{
   grid-column: 14;
 }
 
-#newsletter{
+#newsletter {
   z-index: 1000;
   position: fixed;
   bottom: 4.7em;
   height: 3em;
-  width: calc(100% - 2vw); /* Adjusts the width to account for both margins */
+  width: calc(100% - 2vw);
+  /* Adjusts the width to account for both margins */
   margin-right: 1vw;
   margin-left: 1vw;
 }
@@ -595,7 +656,8 @@ footer{
   background-color: transparent;
   color: white;
   border-radius: 0px;
-  z-index: 1000; /* Ensure it appears above other content */
+  z-index: 1000;
+  /* Ensure it appears above other content */
 }
 
 .newsletter-form-mobil {
@@ -605,13 +667,15 @@ footer{
   width: 100%;
 }
 
-#newsletterToggle, #newsletterToggleMobile {
+#newsletterToggle,
+#newsletterToggleMobile {
   cursor: pointer;
 }
 
 
 .newsletter-form-mobil button {
-  color: black; /* or #000 or whatever color you prefer */
+  color: black;
+  /* or #000 or whatever color you prefer */
 }
 
 .newsletter-form-mobil input[type="email"] {
@@ -651,7 +715,8 @@ footer{
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: opacity 0.5s ease; /* Smooth transition for opacity */
+  transition: opacity 0.5s ease;
+  /* Smooth transition for opacity */
 }
 
 #cover img {
@@ -668,13 +733,15 @@ footer{
 
 .toast {
   position: fixed;
-  top: calc(1em + 8px);      /* sits just under the header */
+  top: calc(1em + 8px);
+  /* sits just under the header */
   left: 50%;
   transform: translate(-50%, -12px);
   background: #fff;
   border: 0.533px solid #000;
   padding: 6px 10px;
-  z-index: 1200;             /* above header (1000) & modal (999) */
+  z-index: 1200;
+  /* above header (1000) & modal (999) */
   opacity: 0;
   pointer-events: none;
   transition: transform 0.18s ease, opacity 0.18s ease;
@@ -682,7 +749,11 @@ footer{
   font-size: 12px;
   text-transform: uppercase;
 }
-.toast--show { opacity: 1; transform: translate(-50%, 0); }
+
+.toast--show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
 
 .toast__spinner {
   display: inline-block;
@@ -700,8 +771,10 @@ footer{
 .header-button img,
 .header-button svg {
   height: 1em;
-  width: auto;            /* SVG skaliert proportional */
-  vertical-align: middle; /* falls inline gerendert */
+  width: auto;
+  /* SVG skaliert proportional */
+  vertical-align: middle;
+  /* falls inline gerendert */
 }
 
 /* Deine Border-Linien, wenn sichtbar (du togglest display) */
@@ -711,120 +784,138 @@ footer{
   height: 1em;
   vertical-align: middle;
   border-left: 0.533px solid currentColor;
-  margin-left: 0.5em;     /* angenehmer Abstand zum Text */
-  margin-right: 0;        /* optional */
+  margin-left: 0.5em;
+  /* angenehmer Abstand zum Text */
+  margin-right: 0;
+  /* optional */
 }
 
 
-@keyframes toast-spin { to { transform: rotate(360deg); } }
+@keyframes toast-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 @media only screen and (max-width: 1600px) {
 
   .modal-body {
     margin-top: 29vh;
   }
-  
+
   h1 {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   h2 {
-    font-size: 9px;
-  }
-  
-  h3 {
-    font-size: 11px;
-  }
-  
-  p {
-    font-size: 11px;
-  }
-  
-  a {
-   font-size: 11px;
+    font-size: 10px;
   }
 
-  label, input, textarea, button, select {
-    font-size: 11px;  
+  h3 {
+    font-size: 12px;
+  }
+
+  p {
+    font-size: 12px;
+  }
+
+  a {
+    font-size: 12px;
+  }
+
+  label,
+  input,
+  textarea,
+  button,
+  select {
+    font-size: 12px;
   }
 
   .header-01 {
     grid-column: 1 / 2;
+    grid-row: 1;
+    margin: 0;
   }
-  
+
   .header-02 {
     grid-column: 2 / 4;
+    grid-row: 1;
+    margin: 0;
   }
 
   .header-03 {
-    grid-column: 14 / 15;
+    grid-column: 15;
   }
 
   .header-04 {
-    grid-column: 15;
+    grid-column: 14;
+    text-align: left;
   }
-  
+
   .number-container-01-02 {
-    width: 11.25%; /* Fixed width for the number column */
+    width: 11.25%;
+    /* Fixed width for the number column */
   }
-  
+
   .number-container-03 {
-    width: 11.25%; /* Fixed width for the number column */
+    width: 11.25%;
+    /* Fixed width for the number column */
   }
 
   .number-container-04 {
-    width: 15%; /* Fixed width for the number column */
+    width: 15%;
+    /* Fixed width for the number column */
   }
 
-  .text-container-01-02{
+  .text-container-01-02 {
     width: 85%;
   }
-  
-  .text-container-03{
+
+  .text-container-03 {
     width: 85%;
   }
-  
-  .text-container-04{
+
+  .text-container-04 {
     width: 80%;
   }
 
   #main-01 {
-    grid-row:1;
+    grid-row: 1;
     grid-column: 1 / 5;
   }
 
   #main-book-01 {
-    grid-row:1;
+    grid-row: 1;
     grid-column: 1 / 5;
   }
-  
+
   #main-02 {
-    grid-row:1;
+    grid-row: 1;
     grid-column: 5 / 9;
   }
-  
+
   #main-book-02 {
-    grid-row:1;
+    grid-row: 1;
     grid-column: 5 / 9;
   }
 
   #main-03 {
-    grid-row:1;
+    grid-row: 1;
     grid-column: 9 / 13;
   }
 
   #main-book-03 {
-    grid-row:1;
+    grid-row: 1;
     grid-column: 9 / 13;
   }
 
   #main-04 {
-    grid-row:1;
+    grid-row: 1;
     grid-column: 13 / 16;
   }
 
   #main-book-04 {
-    grid-row:1;
+    grid-row: 1;
     grid-column: 13 / 16;
   }
 
@@ -835,16 +926,16 @@ footer{
   .footer-01 {
     grid-column: 1/4;
   }
-  
+
   .footer-02 {
-    text-align:center;
-    grid-column: 5 / 12;
+    text-align: center;
+    grid-column: 7 / 10;
   }
-  
+
   .footer-03 {
-    grid-column: 14/15;
+    grid-column: 14;
   }
-  
+
   .footer-04 {
     grid-column: 15;
   }
@@ -861,7 +952,7 @@ footer{
   .modal {
     opacity: 100%;
   }
-  
+
   .modal-body {
     margin-top: 2.6em;
     margin-left: 2vw;
@@ -874,12 +965,12 @@ footer{
     row-gap: 0%;
   }
 
-  header{
+  header {
     padding-top: 0.5em;
     margin-top: 0;
     margin-right: 2vw;
     margin-left: 2vw;
-    width: calc(100% - 4vw); 
+    width: calc(100% - 4vw);
     min-height: 2.5em;
     padding-bottom: 0;
   }
@@ -898,55 +989,63 @@ footer{
 
   h2 {
     font-size: 11px;
-    line-height:1.3em;
+    line-height: 1.3em;
   }
-  
+
   h3 {
     font-size: 13px;
     line-height: 1.3em;
   }
-  
+
   p {
     font-size: 13px;
-    line-height:1.3em;
-  }
-  
-  a {
-    font-size: 10pt;
-    line-height:1.3em;
+    line-height: 1.3em;
   }
 
-  h3, label, input, textarea, button, select {
+  a {
+    font-size: 13px;
+    line-height: 1.3em;
+  }
+
+  h3,
+  label,
+  input,
+  textarea,
+  button,
+  select {
     font-size: 10pt;
   }
 
   input {
     width: 100%;
   }
+
   .header-01 {
-    grid-column:  1 / 2;
+    grid-column: 1;
   }
-  
+
   .header-02 {
-    grid-column: 2 / 4;
+    grid-column: 2/4;
+    text-align: left;
   }
 
   .header-03 {
-    grid-column: 4 / 5;
+    grid-column: 5;
+    text-align: right;
   }
 
   .header-04 {
-    grid-column: 5 / 6;
-    }
+    grid-column: 4;
+  }
 
 
-  #newsletter{
+  #newsletter {
     display: none;
   }
 
   #main-01 {
     margin-top: 0.5em;
-    grid-row:1;
+    grid-row: 1;
     grid-column: 1 / 6;
     display: none;
   }
@@ -959,7 +1058,9 @@ footer{
     grid-column: 3/6;
   }
 
-  #main-book-01, #main-book-02, #main-book-03{
+  #main-book-01,
+  #main-book-02,
+  #main-book-03 {
     margin: 0;
     margin-top: 0.5em;
     grid-column: 1/6;
@@ -967,7 +1068,7 @@ footer{
   }
 
   #main-01-carousel {
-    grid-row:1;
+    grid-row: 1;
     grid-column: 1/6;
     padding-bottom: 1em;
     display: block;
@@ -984,15 +1085,15 @@ footer{
     font-size: 10pt;
     margin-top: 0;
   }
-  
+
   #main-02 {
-    grid-row:2;
+    grid-row: 2;
     grid-column: 1/6;
     padding-bottom: 1em;
   }
-  
+
   #main-03 {
-    grid-row:3;
+    grid-row: 3;
     grid-column: 1/6;
     padding-bottom: 1em;
   }
@@ -1002,39 +1103,45 @@ footer{
     grid-column: 1/6;
     padding-bottom: 1em;
   }
-  
+
   .number-container-01-02 {
-    width: 8%; /* Fixed width for the number column */
-    margin-right: 4px; /* Space between number and heading */
+    width: 8%;
+    /* Fixed width for the number column */
+    margin-right: 4px;
+    /* Space between number and heading */
   }
-  
+
   .number-container-03 {
-    width: 8%; /* Fixed width for the number column */
-    margin-right: 4px; /* Space between number and heading */
+    width: 8%;
+    /* Fixed width for the number column */
+    margin-right: 4px;
+    /* Space between number and heading */
   }
 
   .number-container-04 {
-    width: 8%; /* Fixed width for the number column */
-    margin-right: 4px; /* Space between number and heading */
+    width: 8%;
+    /* Fixed width for the number column */
+    margin-right: 4px;
+    /* Space between number and heading */
   }
-  
-  .text-container-01-02{
+
+  .text-container-01-02 {
     width: 90%;
   }
-  
-  .text-container-03-04{
+
+  .text-container-03-04 {
     width: 90%;
-  } 
+  }
 
   /* Footer section styling */
-  .modal-footer-placeholder{
+  .modal-footer-placeholder {
     opacity: 1;
     margin-right: 2vw;
     margin-left: 2vw;
-    width: calc(100% - 4vw); 
-    bottom: 0;  
+    width: calc(100% - 4vw);
+    bottom: 0;
   }
-  
+
   .form-part {
     grid-column: span 4;
   }
@@ -1042,60 +1149,62 @@ footer{
   footer {
     margin-right: 2vw;
     margin-left: 2vw;
-    width: calc(100% - 4vw); 
+    width: calc(100% - 4vw);
     position: fixed;
   }
 
-  .footer-phone{
+  .footer-phone {
     display: block;
   }
-  
-  .footer-desktop{
+
+  .footer-desktop {
     display: none;
   }
 
-  footer > div > a > h3{
+  footer>div>a>h3 {
     margin: 0px;
   }
 
-  footer > div >  h3{
+  footer>div>h3 {
     margin: 0px;
   }
 
-  .modal-footer-placeholder > div > a > h3{
+  .modal-footer-placeholder>div>a>h3 {
     margin: 0px;
   }
 
-  .modal-footer-placeholder > div >  h3{
+  .modal-footer-placeholder>div>h3 {
     margin: 0px;
   }
 
 
   .footer-01 {
     z-index: 1000;
-    grid-row:2;
+    grid-row: 2;
     grid-column: 1/6;
   }
-  
+
   .footer-02 {
     z-index: 1000;
-    grid-row:4;
+    grid-row: 4;
     grid-column: 1/6;
-    text-align:left
+    text-align: left
   }
 
   .footer-03 {
     z-index: 1000;
-    grid-row:3;
+    grid-row: 3;
     grid-column: 1/6;
-    }
+  }
 
   .footer-04 {
     z-index: 1000;
-    grid-row:1;
+    grid-row: 1;
     grid-column: 1/6;
-    text-align:left
+    text-align: left
   }
 
-   .toast { font-size: 10pt; }
+  .toast {
+    font-size: 10pt;
+  }
 }
