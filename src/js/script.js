@@ -8,8 +8,8 @@ const TEX_DESKTOP = 'ms_360_15000-7500.jpg';
 const TEX_MOBILE  = 'ms_360_9900_4950.jpg';
 
 // 🔧 Focal presets (mm)
-const MOBILE_FOCAL   = 14;       // starting focal on mobile (wider)
-const DESKTOP_FOCAL  = 10;       // starting focal on desktop (tighter)
+const MOBILE_FOCAL   = 14; // starting focal on mobile (wider)
+const DESKTOP_FOCAL  = 10; // starting focal on desktop (tighter)
 const MOBILE_MIN     = 14, MOBILE_MAX   = 30;
 const DESKTOP_MIN    = 10, DESKTOP_MAX  = 30;
 
@@ -19,24 +19,28 @@ let isPinching = false;
 let lon = 0, lat = 0, phi = 0, theta = 0;
 
 // Focal state (set by applyDeviceCameraPreset)
-let focalLength;              // current focal in mm
-let minFocalLength;           // clamps
+let focalLength;        // current focal in mm
+let minFocalLength;     // clamps
 let maxFocalLength;
 let pinchDistanceStart = 0, pinchDistanceEnd = 0;
-let wasMobile = null;         // last known device class
+let wasMobile = null;   // last known device class
 
-// 🔥 NEW: Render-State + Idle-Timer
+// 🔥 Render-State + Idle-Timer
 let isRendering = false;
 let idleTimeout = null;
 
-// 🔥 NEW: subtle auto-pan when idle (to hint it's draggable)
+// 🔥 subtle auto-pan when idle (to hint it's draggable)
 let autoPanEnabled = true;
-let autoPanSpeed = 0.020;          // degrees per frame (~0.7°/sec at 60fps)
+let autoPanSpeed = 0.020;    // degrees per frame (~0.7°/sec at 60fps)
 let lastInteractionAt = Date.now();
-let autoPanDelayMs = 3500;         // wait after interaction before drifting
+let autoPanDelayMs = 3500;   // wait after interaction before drifting
+
+function wW() { return window.innerWidth; }
+function wH() { return window.innerHeight; }
+function isMobile() { return wW() <= MOBILE_BP; }
 
 function startRendering() {
-  // called on any user interaction
+  // called on any user interaction / render-needed event
   lastInteractionAt = Date.now();
 
   if (!isRendering) {
@@ -54,20 +58,38 @@ function resetIdleTimer() {
   clearTimeout(idleTimeout);
 
   idleTimeout = setTimeout(() => {
-    // If autopan is on, keep rendering so the drift is visible.
-    // Otherwise stop rendering as before.
+    // ✅ If auto-pan is enabled, keep rendering so the drift can happen.
+    // Only stop when auto-pan is disabled (e.g. modal open) or you explicitly want to pause.
     if (!autoPanEnabled) stopRendering();
   }, 1200);
 }
 
+
+// --- Modal integration: stop motion completely while modal is open ---
+function pauseAutoPanForModal() {
+  autoPanEnabled = false;
+  isUserInteracting = false;
+  isPinching = false;
+  stopRendering(); // stop RAF completely
+}
+
+function resumeAutoPanAfterModal() {
+  autoPanEnabled = true;
+  lastInteractionAt = Date.now(); // delay drift so it won't move instantly
+  // Don't start rendering here; it will start again on the next interaction
+}
+
+// Optional: small hint drift burst (call once after texture load if you want)
+function hintAutoPanBurst() {
+  if (!autoPanEnabled) return;
+  lastInteractionAt = Date.now() - autoPanDelayMs - 1; // allow autopan immediately
+  startRendering();
+  // ✅ don't stop rendering here
+}
+
 window.addEventListener('load', () => {
   init();
-  // startRendering(); // statt direkt animate()
 });
-
-function wW() { return window.innerWidth; }
-function wH() { return window.innerHeight; }
-function isMobile() { return wW() <= MOBILE_BP; }
 
 function applyDeviceCameraPreset() {
   const mobile = isMobile();
@@ -105,17 +127,20 @@ function init() {
   // RENDERER (crisper on HiDPI, but keep mobile reasonable)
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.domElement.style.opacity = '0';
-renderer.domElement.style.transition = 'opacity 0.6s ease';
+  renderer.domElement.style.transition = 'opacity 0.6s ease';
+
   const dpr = isMobile()
     ? Math.min(2, window.devicePixelRatio)
     : Math.max(1, Math.min(3, window.devicePixelRatio));
   renderer.setPixelRatio(dpr);
   renderer.setSize(wW(), wH());
+
   if ('outputColorSpace' in renderer) {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
   } else {
     renderer.outputEncoding = THREE.sRGBEncoding;
   }
+
   container.appendChild(renderer.domElement);
 
   // SCENE + GEOMETRY
@@ -125,31 +150,27 @@ renderer.domElement.style.transition = 'opacity 0.6s ease';
   const geometry = new THREE.SphereGeometry(500, segW, segH);
   geometry.scale(-1, 1, 1);
 
-   // TEXTURE mit Poster-Fade
- // TEXTURE mit Canvas-Fade
   const texFile = (import.meta.env.BASE_URL || '/') + (isMobile() ? TEX_MOBILE : TEX_DESKTOP);
 
-  // Canvas zuerst unsichtbar (damit du nur das weiße Body-Background siehst)
-  renderer.domElement.style.opacity = '0';
-  renderer.domElement.style.transition = 'opacity 0.6s ease';
-
-  // optional: falls WebGL mal ohne Textur cleared, ist es trotzdem weiß
+  // Optional: if WebGL clears before texture is ready, keep it white
   renderer.setClearColor(0xffffff, 1);
 
   const loader = new THREE.TextureLoader();
   const texture = loader.load(
     texFile,
     () => {
-      // ✅ Textur geladen → Canvas einblenden
+      // ✅ Texture loaded -> fade canvas in
       renderer.domElement.style.opacity = '1';
 
-      // jetzt erst rendern
-      startRendering();
+      // ✅ Render a short hint drift (or swap to startRendering() if you prefer)
+      // startRendering();
+      hintAutoPanBurst(1400);
     }
   );
 
   if ('colorSpace' in texture) texture.colorSpace = THREE.SRGBColorSpace;
   else texture.encoding = THREE.SRGBEncoding;
+
   texture.generateMipmaps = true;
   texture.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
 
@@ -157,11 +178,10 @@ renderer.domElement.style.transition = 'opacity 0.6s ease';
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
 
-
   // 🔑 Apply device preset AFTER camera exists
   applyDeviceCameraPreset();
 
-  // EVENTS (no blend-mode toggling)
+  // EVENTS
   const target = cover || container;
   target.addEventListener('mousedown', onMouseDown, false);
   target.addEventListener('mousemove', onMouseMove, false);
@@ -173,6 +193,10 @@ renderer.domElement.style.transition = 'opacity 0.6s ease';
   target.addEventListener('touchend', onTouchEnd, false);
 
   window.addEventListener('resize', onWindowResize, false);
+
+  // 🛑 stop 3D motion while any modal is open
+  document.addEventListener('modalOpened', pauseAutoPanForModal);
+  document.addEventListener('modalClosed', resumeAutoPanAfterModal);
 }
 
 function onWindowResize() {
@@ -181,7 +205,7 @@ function onWindowResize() {
 
   const mobile = isMobile();
   if (mobile !== wasMobile) {
-    applyDeviceCameraPreset();     // switch preset when crossing breakpoint
+    applyDeviceCameraPreset(); // switch preset when crossing breakpoint
   } else {
     focalLength = clampFocal(focalLength); // keep but enforce clamps
     camera.setFocalLength(focalLength);
@@ -194,7 +218,7 @@ function onWindowResize() {
   renderer.setPixelRatio(dpr);
   renderer.setSize(wW(), wH());
 
-  startRendering(); // 🔥 nach Resize kurz rendern
+  startRendering(); // render briefly after resize
 }
 
 let onPointerDownPointerX, onPointerDownPointerY, onPointerDownLon, onPointerDownLat;
@@ -202,7 +226,7 @@ let onPointerDownPointerX, onPointerDownPointerY, onPointerDownLon, onPointerDow
 function onMouseDown(e) {
   e.preventDefault();
   isUserInteracting = true;
-  startRendering(); // 🔥 Render starten
+  startRendering();
 
   const cover = document.getElementById('cover');
   if (cover) cover.style.opacity = 0;
@@ -219,7 +243,7 @@ function onMouseMove(e) {
     lon = (onPointerDownPointerX - e.clientX) * sensitivity + onPointerDownLon;
     lat = (e.clientY - onPointerDownPointerY) * sensitivity + onPointerDownLat;
 
-    startRendering(); // 🔥 bei Bewegung rendern
+    startRendering();
   }
 }
 
@@ -241,16 +265,18 @@ function clampFocal(f) {
 function onMouseWheel(e) {
   e.preventDefault();
   const zoomSpeed = 0.5;
+
   focalLength -= e.deltaY * zoomSpeed * 0.01;
   focalLength = clampFocal(focalLength);
+
   camera.setFocalLength(focalLength);
   camera.updateProjectionMatrix();
 
-  startRendering(); // 🔥 nach Scroll-Zoom rendern
+  startRendering();
 }
 
 function onTouchStart(e) {
-  startRendering(); // 🔥 Interaktion = render
+  startRendering();
 
   if (e.touches.length === 1) {
     onMouseDown({
@@ -267,6 +293,7 @@ function onTouchStart(e) {
 function onTouchMove(e) {
   if (isPinching && e.touches.length === 2) {
     e.preventDefault();
+
     pinchDistanceEnd = getPinchDistance(e.touches);
     const delta = pinchDistanceEnd - pinchDistanceStart;
 
@@ -278,7 +305,7 @@ function onTouchMove(e) {
     camera.updateProjectionMatrix();
 
     pinchDistanceStart = pinchDistanceEnd;
-    startRendering(); // 🔥 während Pinch rendern
+    startRendering();
   } else if (e.touches.length === 1) {
     onMouseMove({
       clientX: e.touches[0].clientX,
@@ -300,7 +327,7 @@ function getPinchDistance(touches) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-// 🔥 geändert: rendert nur, solange isRendering true ist
+// Render loop only while isRendering is true
 function animate() {
   if (!isRendering) return;
   update();
@@ -308,7 +335,7 @@ function animate() {
 }
 
 function update() {
-  // ✅ Auto-pan only when user is NOT interacting and after a short delay
+  // Auto-pan only when user is NOT interacting and after a short delay
   const idleLongEnough = (Date.now() - lastInteractionAt) > autoPanDelayMs;
   if (autoPanEnabled && !isUserInteracting && !isPinching && idleLongEnough) {
     lon += autoPanSpeed;
