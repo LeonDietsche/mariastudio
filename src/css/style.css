@@ -178,6 +178,35 @@ button {
   border: none;
 }
 
+/* ✅ iOS Safari: kill native button styling + stop "system blue" text */
+button,
+button[type="button"],
+button[type="submit"],
+input[type="submit"] {
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-fill-color: currentColor;
+  color: inherit;
+}
+
+/* ✅ Force ALL your form nav buttons to match each other */
+.back-btn,
+.submit-btn,
+#nextBtn2,
+#nextBtn3,
+#backBtn2,
+#backBtn3 {
+  background-color: rgb(230, 230, 230);
+  border: none;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-right: 6px;
+  padding-left: 6px;
+  margin-left: -6px;
+  color: #000 !important;
+}
+
 .header-button {
   padding-top: 0px;
   padding-bottom: 0px;
@@ -251,6 +280,37 @@ input {
 .custom-radio-billing input[type="radio"] {
   margin-right: 5px;
   width: 20px;
+}
+
+/* ✅ iOS Safari: stop native blue/pill styling on dropdowns */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  color: #000 !important;
+  -webkit-text-fill-color: currentColor;
+  padding: 2px 2px;
+  padding-bottom: 0px;
+  padding-right: 18px;
+  font: inherit;
+  text-transform: uppercase;
+  line-height: 1.3em;
+}
+
+/* Custom dropdown arrow (since iOS native arrow is removed) */
+select {
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position:
+    calc(100% - 12px) 50%,
+    calc(100% - 7px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 18px; /* space for the arrow */
+}
+
+select:focus {
+  outline: none;
 }
 
 select option {

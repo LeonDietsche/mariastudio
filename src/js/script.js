@@ -29,8 +29,16 @@ let wasMobile = null;         // last known device class
 let isRendering = false;
 let idleTimeout = null;
 
+// 🔥 NEW: subtle auto-pan when idle (to hint it's draggable)
+let autoPanEnabled = true;
+let autoPanSpeed = 0.020;          // degrees per frame (~0.7°/sec at 60fps)
+let lastInteractionAt = Date.now();
+let autoPanDelayMs = 3500;         // wait after interaction before drifting
+
 function startRendering() {
-  // wird bei jeder Interaktion aufgerufen
+  // called on any user interaction
+  lastInteractionAt = Date.now();
+
   if (!isRendering) {
     isRendering = true;
     requestAnimationFrame(animate);
@@ -44,9 +52,11 @@ function stopRendering() {
 
 function resetIdleTimer() {
   clearTimeout(idleTimeout);
-  // nach 1.2s ohne neue Interaktion rendern wir nicht mehr weiter
+
   idleTimeout = setTimeout(() => {
-    stopRendering();
+    // If autopan is on, keep rendering so the drift is visible.
+    // Otherwise stop rendering as before.
+    if (!autoPanEnabled) stopRendering();
   }, 1200);
 }
 
@@ -298,6 +308,12 @@ function animate() {
 }
 
 function update() {
+  // ✅ Auto-pan only when user is NOT interacting and after a short delay
+  const idleLongEnough = (Date.now() - lastInteractionAt) > autoPanDelayMs;
+  if (autoPanEnabled && !isUserInteracting && !isPinching && idleLongEnough) {
+    lon += autoPanSpeed;
+  }
+
   lat = Math.max(-85, Math.min(85, lat));
   phi = THREE.MathUtils.degToRad(90 - lat);
   theta = THREE.MathUtils.degToRad(lon);
