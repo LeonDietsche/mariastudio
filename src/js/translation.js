@@ -12,9 +12,7 @@ export const translations = {
     _main03_2_Electricity: "Electricity",
     _main03_2_Electricity_list: `- High voltage, up to 96 kW<br>- High-speed Wi-Fi: 500 Mbps`,
     _main03_3_Elevators: "Elevators",
-    _main03_3_Elevators_list: `- Elevator 1: H 2.1 m × W 1.8 m ×&nbsp;L&nbsp;2.55&nbsp;m<br>- Elevator 2: H 2.4 m × W 1.87 m ×&nbsp;L&nbsp;2.8&nbsp;m`,  
-    
-    
+    _main03_3_Elevators_list: `- Elevator 1: H 2.1 m × W 1.8 m ×&nbsp;L&nbsp;2.55&nbsp;m<br>- Elevator 2: H 2.4 m × W 1.87 m ×&nbsp;L&nbsp;2.8&nbsp;m`,
     _main04_address: `Studio Address`,
     _main04_1_address: `Maria Studio<br>100 Av. du Général Leclerc<br>93500 Pantin [FR]<br>2nd floor, Unit 215`,
     _main04_delivery: `Delivery Address`,
@@ -22,8 +20,8 @@ export const translations = {
     _main04_phone: `phone`,
     _main04_arrival: `Arrival by Public Transport`,
     _main04_5_arrival: `Subway 5 - Hoche<br>RER E - Pantin<br>Tramway 3B - Delphine Seyrig`,
-    
-    
+    _footer_mobile_terms: `Terms & Conditions`,
+    _footer_desktop_terms: `Terms & Conditions`,
     _book01_title: `Booking Request Form`,
     _book01_2_shootdays: `Total shoot days*`,
     _book01_4_name: `Name*`,
@@ -97,9 +95,7 @@ export const translations = {
     _main03_2_Electricity: "Électricité",
     _main03_2_Electricity_list: `- Haute tension, jusqu'à 96 kW<br>- Wi-Fi haut débit : 500 Mbps`,
     _main03_3_Elevators: "Ascenseurs",
-    _main03_3_Elevators_list: `- Ascenseur 1 : H 2.1 m × L 1.8 m ×&nbsp;L&nbsp;2.55&nbsp;m<br>- Ascenseur 2 : H 2.4 m × L 1.87 m ×&nbsp;L&nbsp;2.8&nbsp;m`,  
-    
-
+    _main03_3_Elevators_list: `- Ascenseur 1 : H 2.1 m × L 1.8 m ×&nbsp;L&nbsp;2.55&nbsp;m<br>- Ascenseur 2 : H 2.4 m × L 1.87 m ×&nbsp;L&nbsp;2.8&nbsp;m`,
     _main04_address: `adresse du studio`,
     _main04_1_address: `Maria Studio<br>100 Av. du Général Leclerc<br>93500 Pantin [FR]<br>2ème étage, Unité 215`,
     _main04_delivery: `adresse de livraison`,
@@ -107,10 +103,8 @@ export const translations = {
     _main04_phone: `téléphone`,
     _main04_arrival: `Accès par les transports publics`,
     _main04_5_arrival: `Métro 5 - Hoche<br>RER E - Pantin<br>Tramway 3B - Delphine Seyrig`,
-    
-    
-    
-    
+    _footer_mobile_terms: `Conditions générales`,
+    _footer_desktop_terms: `Conditions générales`,
     _book01_title: `Formulaire de réservation`,
     _book01_2_shootdays: `Nombre de jours de tournage*`,
     _book01_4_name: `Nom*`,
@@ -178,7 +172,7 @@ export let currentLanguage = 'en';
 export function switchLanguage() {
   currentLanguage = currentLanguage === 'en' ? 'fr' : 'en';
   applyTranslations();
-  updateTermsLinks(); 
+  updateTermsLinks();
 }
 
 export function t(key) {
@@ -189,8 +183,8 @@ export function t(key) {
 export function updateTermsLinks() {
   const base = `${import.meta.env.BASE_URL}terms_conditions`;
   const file = currentLanguage === "fr"
-    ? "ms_terms_and_conditions_fr.pdf"
-    : "ms_terms_and_conditions_en.pdf";
+    ? "maria_studio_conditions_generales.pdf"
+    : "maria_studio_terms_and_conditions.pdf";
 
   const href = `${base}/${file}`;
 
